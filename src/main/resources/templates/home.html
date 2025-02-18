@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Commerce</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <!-- Menu Panel -->
+    <div id="menu-panel" class="panel">
+        <div class="header-section menu-header">
+            <a th:href="@{/signin}">
+                <button class="menu-button">Sign In</button>
+            </a>
+            <a th:href="@{/signup}">
+                <button class="menu-button">Sign Up</button>
+            </a>
+            <span class="close-btn" onclick="closePanel('menu-panel')">&times;</span>
+        </div>
+        <ul>
+            <li>Deals Today</li>
+            <li>Shop with Us</li>
+            <li>Account Service</li>
+            <li th:each="category : ${categories}">
+                <a th:href="'#' + ${category.category_name}" th:text="${category.category_name}"></a>
+            </li>
+        </ul>
+        
+    </div>
+    
+
+    <!-- Cart Panel -->
+    <div id="cart-panel" class="panel right">
+        <div class="header-section cart-header">
+            <span class="close-btn" onclick="closePanel('cart-panel')">&times;</span>
+            <p>Your Shopping Cart</p>
+        </div>
+        <p>Boo! Your cart is empty</p>
+        <button>Shop Now</button>
+    </div>
+
+    <header>
+        <div class="menu" onclick="openPanel('menu-panel')">&#9776;</div>
+        <input type="text" placeholder="Search...">
+        <div class="cart" onclick="openPanel('cart-panel')">🛒(0)</div>
+    </header>
+
+    <div class="carousel">
+        <div>Promotion Image #1</div>
+        <div class="carousel-indicators">
+            <div class="active"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <section>
+        <div class="section-title">DEALS FOR YOU</div>
+        <div class="promotions">
+            <div class="card">Promo 1</div>
+            <div class="card">Promo 2</div>
+            <div class="card">Promo 3</div>
+            <div class="card">Promo 4</div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">SHOP BY CATEGORY</div>
+        <div class="categories">
+            <div th:each="category : ${categories}" class="category-card">
+                <img th:src="@{${category.category_img_url}}" alt="Category Image">
+                <div class="category-text" th:text="${category.category_name}"></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">SHOP NOW</div>
+        <div class="shop-now">
+            <div th:each="category : ${categories}" class="category-section" th:id="${category.category_name}">
+                <div class="category-title" th:text="${category.category_name}"></div>
+                <div class="products">
+                    <div th:each="product : ${category.products}" class="card product">
+                        <a th:href="@{/product/{id}(id=${product.product_id})}" style="display: block;">
+                            <img th:src="${product.mainImage != null ? product.mainImage.product_img_url : 'placeholder.png'}" 
+                                 alt="Product Image">
+                        </a>
+                        <a th:href="@{/product/{id}(id=${product.product_id})}" 
+                           th:text="${product.product_name}" 
+                           style="text-decoration: none; color: inherit; display: block; font-weight: bold;">
+                        </a>
+                        <div>
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                <span th:if="${star <= product.review}">⭐</span>
+                                <span th:if="${star > product.review}">☆</span>
+                            </span>
+                        </div>
+                        <div class="price" th:text="'$' + ${product.price}"></div>
+                        <button>Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="header :: header-scripts"></div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<header th:fragment="header">
+    <div class="menu" onclick="openPanel('menu-panel')">&#9776;</div>
+    <input type="text" placeholder="Search...">
+    <div class="cart" onclick="openPanel('cart-panel')">🛒(0)</div>
+</header>
+
+<!-- Menu Panel -->
+<div id="menu-panel" class="panel">
+    <div class="header-section menu-header">
+        <a th:href="@{/signin}">
+            <button class="menu-button">Sign In</button>
+        </a>
+        <a th:href="@{/signup}">
+            <button class="menu-button">Sign Up</button>
+        </a>
+        <span class="close-btn" onclick="closePanel('menu-panel')">&times;</span>
+    </div>
+    <ul>
+        <li>Deals Today</li>
+        <li>Shop with Us</li>
+        <li>Account Service</li>
+        <li th:each="category : ${categories}">
+            <a th:href="'#' + ${category.category_name}" th:text="${category.category_name}"></a>
+        </li>
+    </ul>
+</div>
+
+<!-- Cart Panel -->
+<div id="cart-panel" class="panel right">
+    <div class="header-section cart-header">
+        <span class="close-btn" onclick="closePanel('cart-panel')">&times;</span>
+        <p>Your Shopping Cart</p>
+    </div>
+    <p>Boo! Your cart is empty</p>
+    <button>Shop Now</button>
+
+<th:block th:fragment="header-scripts">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function openPanel(panelId) {
+                document.getElementById(panelId).classList.add('open');
+            }
+
+            function closePanel(panelId) {
+                document.getElementById(panelId).classList.remove('open');
+            }
+            window.openPanel = openPanel;
+            window.closePanel = closePanel;
+        });
+    </script>
+</th:block>
+</div>
+
+
