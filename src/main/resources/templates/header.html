@@ -1,18 +1,29 @@
 <header th:fragment="header">
     <div class="menu" onclick="openPanel('menu-panel')">&#9776;</div>
     <input type="text" placeholder="Search...">
-    <div class="cart" onclick="openPanel('cart-panel')">🛒(0)</div>
-</header>
+    <div class="cart" onclick="openPanel('cart-panel')">
+        🛒(<span id="cart-count" th:text="${cartTotal}">0</span>)
+    </div>    
 
-<!-- Menu Panel -->
 <div id="menu-panel" class="panel">
     <div class="header-section menu-header">
-        <a th:href="@{/signin}">
-            <button class="menu-button">Sign In</button>
-        </a>
-        <a th:href="@{/signup}">
-            <button class="menu-button">Sign Up</button>
-        </a>
+        <th:block th:if="${session.user == null}">
+            <a th:href="@{/signin}">
+                <button class="menu-button">Sign In</button>
+            </a>
+            <a th:href="@{/signup}">
+                <button class="menu-button">Sign Up</button>
+            </a>
+        </th:block>
+        <th:block th:if="${session.user != null}">
+            <div class="user-info">
+                <img th:src="${session.userImage != null ? session.userImage : '/images/default-profile.png'}" alt="User Image" class="profile-image">
+                <span>Hi,<span th:text="${session.user.username}"></span></span>
+            </div>
+            <a th:href="@{/logout}">
+                <button class="menu-button">Logout</button>
+            </a>
+        </th:block>
         <span class="close-btn" onclick="closePanel('menu-panel')">&times;</span>
     </div>
     <ul>
@@ -25,15 +36,52 @@
     </ul>
 </div>
 
-<!-- Cart Panel -->
 <div id="cart-panel" class="panel right">
     <div class="header-section cart-header">
         <span class="close-btn" onclick="closePanel('cart-panel')">&times;</span>
         <p>Your Shopping Cart</p>
     </div>
-    <p>Boo! Your cart is empty</p>
-    <button>Shop Now</button>
 
+    <th:block th:if="${session.user == null}">
+        <p>Please sign in to view your cart</p>
+        <a th:href="@{/signin}">
+            <button>Sign In</button>
+        </a>
+        <a th:href="@{/signup}">
+            <button>Sign Up</button>
+        </a>
+    </th:block>
+    <th:block th:if="${session.user != null}">
+        <div id="cart-content" class="cart-content">
+            <div id="cart-items">
+                <th:block th:each="cartItem : ${cartItems}">
+                    <div class="cart-item">
+                        <img th:src="${cartItem.product.mainImage != null ? cartItem.product.mainImage.product_img_url : 'placeholder.png'}" 
+                             alt="Product Image" class="cart-item-image">
+    
+                        <div class="cart-item-details">
+                            <span class="cart-item-name" th:text="${cartItem.product.product_name}"></span>
+                        </div>
+        
+                        <div class="cart-item-quantity">
+                            <button th:attr="onclick=|removeFromCart(${cartItem.product.product_id})|" class="quantity-btn">➖</button>
+                            <span th:text="${cartItem.quantity}"></span>
+                            <button th:attr="onclick=|addToCart(${cartItem.product.product_id})|" class="quantity-btn">➕</button>
+                        </div>
+                    </div>
+                </th:block>
+                <p id="empty-cart-message" th:if="${cartItems == null or cartItems.isEmpty()}">Boo! Your cart is empty</p>
+            </div>
+            <div id="cart-footer" class="cart-footer">
+                <span>Checkout: $<span id="cart-total-price" th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span></span>
+                <button id="checkout-btn" class="checkout-btn">Checkout</button>
+            </div>            
+        </div>
+    </th:block>
+</div>
+</header>
+
+<!-- Add the required JavaScript to handle cart operations -->
 <th:block th:fragment="header-scripts">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -47,8 +95,49 @@
             window.openPanel = openPanel;
             window.closePanel = closePanel;
         });
+
+    function addToCart(productId) {
+        fetch(`/cart/add/${productId}`, { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "NOT_LOGGED_IN") {
+                    alert("Please log in to add items to the cart.");
+                    return;
+                }
+                updateCartUI(data);
+            })
+            .catch(error => console.error("Error updating cart:", error));
+    }
+
+    function removeFromCart(productId) {
+        fetch(`/cart/remove/${productId}`, { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "NOT_LOGGED_IN") {
+                    alert("Please log in to remove items from the cart.");
+                    return;
+                }
+                updateCartUI(data);
+            })
+            .catch(error => console.error("Error updating cart:", error));
+    }
+
+    function updateCartUI(data) {
+        document.getElementById("cart-count").innerText = data.cartTotal;
+        document.getElementById("cart-total-price").innerText = `${data.cartTotalPrice.toFixed(2)}`;
+        reloadCart();
+    }
+
+    function reloadCart() {
+        fetch('/home')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+                document.getElementById("cart-items").innerHTML = doc.getElementById("cart-items").innerHTML;
+            });
+        }
+
+
     </script>
 </th:block>
-</div>
-
-

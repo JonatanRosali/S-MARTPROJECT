@@ -18,7 +18,11 @@ public class UserRole {
 
     public UserRole(){
     }
-
+    public UserRole(int role_id, String role_name, String role_description){
+        this.role_id = role_id;
+        this.role_name = role_name;
+        this.role_description = role_description;
+    }
     public int getRole_id() {
         return role_id;
     }
@@ -49,5 +53,9 @@ public class UserRole {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+    public UserRole orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
     }
 }

@@ -35,6 +35,7 @@ header .menu, header .cart {
 .panel {
     position: fixed;
     top: 0;
+    left: 0;
     width: 300px;
     height: 100%;
     background-color: white;
@@ -48,6 +49,10 @@ header .menu, header .cart {
     right: 0;
     transform: translateX(100%);
     width: 100%;
+    height: 100vh; /* Ensure full viewport height */
+    display: flex;
+    flex-direction: column; /* Allows content below header */
+    overflow: hidden; /* Prevents scrolling of the whole panel */
 }
 
 .panel.open {
@@ -105,6 +110,21 @@ header .menu, header .cart {
     text-align: center; 
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between image and username */
+}
+
+.profile-image {
+    width: 40px; /* Set a fixed width */
+    height: 40px; /* Set a fixed height */
+    border-radius: 50%; /* Makes it circular */
+    object-fit: cover; /* Ensures it fills the frame properly */
+    border: 2px solid white; /* Adds a subtle border */
+}
+
+
 .close-btn {
     font-size: 1.5em;
     cursor: pointer;
@@ -121,6 +141,108 @@ header .menu, header .cart {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
+.cart-header {
+    position: sticky;
+    top: 0;
+    background-color: #81d4ac;
+    padding: 10px;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    z-index: 1000;
+}
+.cart-content {
+    flex-grow: 1; /* Takes up available space */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding-bottom: 6vh;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between name & buttons */
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    gap: 10px;
+}
+
+.cart-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.cart-item-details {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: space-between; /* Pushes name to left, buttons to right */
+}
+
+.cart-item-name {
+    font-weight: bold;
+    flex-grow: 1; /* Pushes quantity buttons to right */
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.quantity-btn {
+    background-color: #81d4ac;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.quantity-btn:hover {
+    background-color: #609c7c;
+}
+
+/* Ensure proper spacing in cart footer */
+.cart-footer {
+    position: absolute;
+    bottom: 0; /* Stick to the bottom */
+    width: 96.5%;
+    background-color: #81d4ac;
+    padding: 1vh 2vw; /* Add horizontal padding */
+    display: flex;
+    justify-content: space-between; /* Keep left and right spacing balanced */
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    z-index: 1000;
+    height: 5vh;
+}
+
+/* Fix Checkout button alignment */
+.checkout-btn {
+    background: #ffd700;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+    min-width: 120px; /* Ensure consistent width */
+    margin-left: auto; /* Push it towards the right without breaking layout */
+}
+
+.checkout-btn:hover {
+    background: #e6c200;
+}
+
 
 /* Carousel and Sections */
 .carousel {
@@ -254,6 +376,7 @@ section {
 }
 
 .card.product {
+    position: relative;
     width: 160px; /* Fixed width */
     height: 220px; /* Fixed height */
     background: white;
@@ -267,6 +390,18 @@ section {
     width: 100px;
     height: 100px;
     object-fit: contain;
+}
+.card.product .cart-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 25px; 
+    height: 25px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+.card.product .cart-icon:hover {
+    transform: scale(1.2);
 }
 
 

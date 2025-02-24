@@ -1,11 +1,16 @@
 package sat301.s_martproject.model;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class User {
@@ -16,10 +21,15 @@ public class User {
     private String email;
     private String password;
     private String profile_img_url;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime joinedDate = LocalDateTime.now();
+
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private UserRole role;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 
     public User() {
     }
@@ -62,6 +72,13 @@ public class User {
 
     public void setProfile_img_url(String profile_img_url) {
         this.profile_img_url = profile_img_url;
+    }
+    public LocalDateTime getJoinedDate() {
+        return joinedDate;
+    }
+
+    public void setJoinedDate(LocalDateTime joinedDate) {
+        this.joinedDate = joinedDate;
     }
 
     public UserRole getRole() {

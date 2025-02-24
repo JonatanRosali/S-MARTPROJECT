@@ -31,6 +31,8 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductImage> images;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CartDetails> cartDetails;
 
     
 
