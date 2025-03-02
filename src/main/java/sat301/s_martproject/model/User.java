@@ -1,6 +1,8 @@
 package sat301.s_martproject.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -22,7 +25,9 @@ public class User {
     private String password;
     private String profile_img_url;
     @Column(nullable = false, updatable = false)
-    private LocalDateTime joinedDate = LocalDateTime.now();
+    private LocalDateTime joined_date = LocalDateTime.now();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserDetails> userDetailsList = new ArrayList<>();
 
 
     @ManyToOne
@@ -73,12 +78,12 @@ public class User {
     public void setProfile_img_url(String profile_img_url) {
         this.profile_img_url = profile_img_url;
     }
-    public LocalDateTime getJoinedDate() {
-        return joinedDate;
+    public LocalDateTime getJoined_date() {
+        return joined_date;
     }
 
-    public void setJoinedDate(LocalDateTime joinedDate) {
-        this.joinedDate = joinedDate;
+    public void setJoined_date(LocalDateTime joined_date) {
+        this.joined_date = joined_date;
     }
 
     public UserRole getRole() {
@@ -87,5 +92,12 @@ public class User {
     
     public void setRole(UserRole role) {
         this.role = role;
+    }
+    public List<UserDetails> getUserDetailsList() {
+        return userDetailsList;
+    }
+    
+    public void setUserDetailsList(List<UserDetails> userDetailsList) {
+        this.userDetailsList = userDetailsList;
     }
 }

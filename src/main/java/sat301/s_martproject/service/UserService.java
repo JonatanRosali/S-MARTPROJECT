@@ -46,4 +46,7 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepo.findByEmail(email);
     }
+    public void updateUser(User user) {
+        userRepo.save(user);
+    }
 }

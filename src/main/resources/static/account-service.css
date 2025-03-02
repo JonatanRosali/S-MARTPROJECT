@@ -1,0 +1,103 @@
+/* Centered container */
+.account-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 40px auto;
+    max-width: 600px;
+}
+
+/* Profile Picture */
+.profile-section {
+    flex-shrink: 0;
+}
+
+.profile-image {
+    width: 80px; /* Set a fixed width */
+    height: 80px; /* Set a fixed height */
+    border-radius: 50%; /* Makes it circular */
+    object-fit: cover; /* Ensures it fills the frame properly */
+    border: 2px solid #81d4ac; /* Adds a subtle border */
+}
+
+/* User Details */
+.user-details h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #333;
+}
+
+.user-details p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Grid Layout for Buttons */
+.account-service-container {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Creates a 2x2 grid */
+    gap: 15px;
+}
+
+.account-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px; /* Increase the height for a box-like appearance */
+    background-color: whitesmoke; /* Background color */
+    color: #333; /* Text color */
+    text-align: center;
+    padding: 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    border: 2px solid #81d4ac; /* Add border */
+}
+
+.account-btn:hover {
+    background-color: #609c7c;
+}
+
+/* Center everything in the Change Profile Picture Page */
+.change-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 15px;
+    margin: 50px auto;
+    max-width: 400px;
+}
+
+/* Consistent Button Sizing */
+.btn-cpp {
+    width: 100%;
+    max-width: 250px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    background-color: whitesmoke; /* Background color */
+    color: #333; /* Text color */
+    text-align: center;
+    padding: 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    border: 2px solid #81d4ac; 
+}

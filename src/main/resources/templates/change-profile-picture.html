@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Profile Picture</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/account-service.css}">
+</head>
+<body>
+    <!-- Load the Account Services Header -->
+    <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
+
+    <!-- Centered Profile Section -->
+    <div class="change-profile-container">
+        <div class="profile-section">
+            <img th:src="${session.userImage != null ? session.userImage : '/images/default-profile.png'}" 
+                 alt="Profile Picture" class="profile-image">
+        </div>
+
+        <h2>Change Profile Picture</h2>
+
+        <form th:action="@{/account-service/upload-profile-picture}" method="post" enctype="multipart/form-data">
+            <input type="file" name="profilePicture" accept="image/*" required id="fileInput">
+            <p id="fileSizeError" style="color: red; display: none;">File size exceeds 10MB limit!</p>
+            <button type="submit" class="btn-cpp">Upload</button>
+        </form>
+
+        <a th:href="@{/account-service}" class="btn-cpp">Back to Account Services</a>
+    </div>
+
+    <th:block th:replace="~{accountServicesHeader :: accountServicesHeader-scripts}"></th:block>
+
+    <script>
+        document.getElementById("fileInput").addEventListener("change", function () {
+            var file = this.files[0];
+            var maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file && file.size > maxSize) {
+                document.getElementById("fileSizeError").style.display = "block";
+                this.value = ""; // Reset input
+            } else {
+                document.getElementById("fileSizeError").style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

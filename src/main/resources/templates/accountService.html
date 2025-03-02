@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Services</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/account-service.css}"> <!-- New CSS file -->
+</head>
+<body>
+    <!-- Load the Account Services Header -->
+    <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
+
+    <!-- Account Details Section -->
+    <div class="account-info">
+        <div class="profile-section">
+            <img th:src="${session.userImage != null ? session.userImage : '/images/default-profile.png'}" 
+                 alt="Profile Picture" class="profile-image">
+        </div>
+        <div class="user-details">
+            <h2 th:text="${session.user.username}">Username</h2>
+            <p>Member since: <span th:text="${#temporals.format(session.user.joined_date, 'MMMM dd, yyyy')}"></span></p>
+        </div>
+    </div>
+
+    <!-- Account Service Options -->
+    <div class="account-service-container">
+        <div class="account-grid">
+            <a th:href="@{/account-service/change-password}" class="account-btn">Change Password</a>
+            <a th:href="@{/account-service/change-profile-picture}" class="account-btn">Change Profile Picture</a>
+            <a th:href="@{/account-service/shipping-details}" class="account-btn">Edit Shipping Details</a>
+            <a th:href="@{/account-service/payment-methods}" class="account-btn">Edit Payment Methods</a>
+            <a th:href="@{/account-service/order-history}" class="account-btn">View Order History</a>
+        </div>
+    </div>
+
+    <!-- Ensure the script is included -->
+    <th:block th:replace="~{accountServicesHeader :: accountServicesHeader-scripts}"></th:block>
+</body>
+</html>

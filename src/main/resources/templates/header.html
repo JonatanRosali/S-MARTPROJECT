@@ -28,10 +28,17 @@
     </div>
     <ul>
         <li>Deals Today</li>
+    </ul>
+    <ul>
         <li>Shop with Us</li>
-        <li>Account Service</li>
         <li th:each="category : ${categories}">
             <a th:href="'#' + ${category.category_name}" th:text="${category.category_name}"></a>
+        </li>
+    </ul>
+    <ul th:if="${session.user != null}">
+        <li>YOUR ACCOUNT</li>
+        <li>
+            <a th:href="@{/account-service}">Account Service</a>
         </li>
     </ul>
 </div>

@@ -1,0 +1,53 @@
+<header th:fragment="accountServicesHeader">
+    <div class="menu" onclick="openPanel('menu-panel')">&#9776;</div>
+    <p class="title">Account Services</p>
+    <div id="menu-panel" class="panel">
+        <div class="header-section menu-header">
+            <th:block th:if="${session.user != null}">
+                <div class="user-info">
+                    <span class="menu-button">Menu Service</span>
+                </div>
+            </th:block>
+            <span class="close-btn" onclick="closePanel('menu-panel')">&times;</span>
+        </div>
+        <ul th:if="${session.user != null}">
+            <li>MANAGE YOUR ACCOUNT</li>
+            <li>
+                <a th:href="@{/account-service}">Change Password</a>
+            </li>
+            <li>
+                <a th:href="@{/account-service}">Change Profile Picture</a>
+            </li>
+            <li>
+                <a th:href="@{/account-service}">Edit Shipping Details</a>
+            </li>
+            <li>
+                <a th:href="@{/account-service}">Edit Payment Methods</a>
+            </li>
+            <li>
+                <a th:href="@{/account-service}">View History</a>
+            </li>
+            <li>
+                <a th:href="@{/home}">Back to Home</a>
+            </li>
+            <li>
+                <a th:href="@{/logout}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</header>
+<th:block th:fragment="accountServicesHeader-scripts">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function openPanel(panelId) {
+                document.getElementById(panelId).classList.add('open');
+            }
+
+            function closePanel(panelId) {
+                document.getElementById(panelId).classList.remove('open');
+            }
+            window.openPanel = openPanel;
+            window.closePanel = closePanel;
+        });
+    </script>
+</th:block>
