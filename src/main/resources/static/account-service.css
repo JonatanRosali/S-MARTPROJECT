@@ -101,3 +101,144 @@
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
     border: 2px solid #81d4ac; 
 }
+
+/* Centered Change Password Page */
+.change-password-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    margin: 50px auto;
+    max-width: 400px;
+}
+
+/* Input Fields Styling */
+.change-password-container input {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Consistent Button Styling */
+.account-btn {
+    width: 100%;
+    max-width: 250px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+/* Centered Shipping Details Container */
+.shipping-container {
+    max-width: 400px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+/* Shipping Card */
+.shipping-card {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Recipient Name */
+.recipient-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Address */
+.address {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0 0;
+}
+
+/* No Shipping Details Message */
+.no-details {
+    color: #777;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+/* Consistent Button Styling */
+.account-btn {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 20px auto;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: whitesmoke;
+    border: 2px solid #81d4ac;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.account-btn:hover {
+    background-color: #f0f0f0;
+    color: #609c7c;
+}
+
+/* Container for Add Shipping Page */
+.shipping-container {
+    max-width: 400px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+/* Input Fields */
+.shipping-container input,
+.shipping-container textarea {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Checkbox Styling */
+.shipping-container label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.account-btn {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 15px auto;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: whitesmoke;
+    border: 2px solid #81d4ac;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.account-btn:hover {
+    background-color: #f0f0f0;
+    color: #609c7c;
+}

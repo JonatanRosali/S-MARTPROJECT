@@ -414,6 +414,135 @@ section {
     transform: scale(1.2);
 }
 
+/* Product Page Container */
+.product-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Back to Home Link */
+.back-link {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Layout: Image on Left, Info on Right */
+.product-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+#productCarousel.carousel.slide {
+    background-color: white !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+/* Centered Carousel */
+.carousel-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+}
+.carousel-inner {
+    background-color: white !important; /* Override Bootstrap styles */
+}
+
+/* Fixed Image Container - Ensure Background is White */
+.carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px; /* Fixed height */
+    width: 400px;  /* Fixed width */
+    background-color: white; /* Set to white */
+    border: none; /* Remove any potential borders */
+    box-shadow: none; /* Remove any shadows */
+}
+
+/* Ensure Images Scale Without Cropping */
+.carousel-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Scale the image while maintaining aspect ratio */
+    background-color: white; /* Ensures no gray background on image */
+    border-radius: 10px;
+}
+
+
+/* Carousel Arrows */
+.carousel-control-prev,
+.carousel-control-next {
+    color: black !important; /* Make arrows black */
+    font-size: 24px;
+    opacity: 1;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    color: #333; /* Slightly darker on hover */
+}
+
+/* Product Info */
+.product-info {
+    flex: 1;
+    text-align: left;
+}
+
+.product-info h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.product-description {
+    font-size: 16px;
+    color: #666;
+    margin: 10px 0;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 10px 0;
+}
+
+.product-review {
+    font-size: 16px;
+    color: #f39c12;
+}
+
+/* Add to Cart Button */
+.add-to-cart {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #2980b9;
+    color: white;
+    transition: 0.3s;
+}
+
+.add-to-cart:hover {
+    background-color: #1c5d8a;
+}
+
+
+
 
 
 /* Ensure 1 product per row on smaller screens */

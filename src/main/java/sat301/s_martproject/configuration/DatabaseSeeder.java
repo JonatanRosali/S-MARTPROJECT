@@ -4,8 +4,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sat301.s_martproject.model.Category;
+import sat301.s_martproject.model.PaymentType;
 import sat301.s_martproject.model.UserRole;
 import sat301.s_martproject.repository.CategoryRepo;
+import sat301.s_martproject.repository.PaymentTypeRepo;
 import sat301.s_martproject.repository.UserRoleRepo;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 public class DatabaseSeeder {
 
     @Bean
-    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo) {
+    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo) {
         return args -> {
             // Seed user_role table
             if (userRoleRepo.count() == 0) { // Only insert if empty
@@ -37,6 +39,15 @@ public class DatabaseSeeder {
                         new Category("Bakery", "/images/CategoryBakery.png")
                 );
                 categoryRepo.saveAll(categories);
+            }
+
+            if (paymentTypeRepo.count() == 0) { // Only insert if empty
+                List<PaymentType> types = List.of(
+                        new PaymentType("WeChat", "Wechat application payment"),
+                        new PaymentType("Alipay", "Alipay application payment"),
+                        new PaymentType("Bank Transfer", "Bank transfer payment")
+                );
+                paymentTypeRepo.saveAll(types);
             }
         };
     }

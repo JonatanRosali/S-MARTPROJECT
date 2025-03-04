@@ -27,19 +27,19 @@ public class UserDetails {
     private String additional_info;
 
     @Column(nullable = false)
-    private boolean is_default;
+    private boolean isDefault;
 
     // Constructors
     public UserDetails() {}
 
-    public UserDetails(User user, String recipient_name, String detail_type, String phone_number, String address, String additional_info, boolean is_default) {
+    public UserDetails(User user, String recipient_name, String detail_type, String phone_number, String address, String additional_info, boolean isDefault) {
         this.user = user;
         this.recipient_name = recipient_name;
         this.detail_type = detail_type;
         this.phone_number = phone_number;
         this.address = address;
         this.additional_info = additional_info;
-        this.is_default = is_default;
+        this.isDefault = isDefault;
     }
 
     // Getters and Setters
@@ -100,10 +100,10 @@ public class UserDetails {
     }
 
     public boolean isDefault() {
-        return is_default;
+        return isDefault;
     }
 
-    public void setDefault(boolean is_default) {
-        this.is_default = is_default;
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 }

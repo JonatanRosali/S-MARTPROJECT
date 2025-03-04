@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${shippingDetail != null ? 'Edit Shipping Details' : 'Add Shipping Details'}"></title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/account-service.css}">
+</head>
+<body>
+    <!-- Load the Account Services Header -->
+    <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
+
+    <div class="shipping-container">
+        <h2 th:text="${shippingDetail != null ? 'Edit Shipping Details' : 'Add Shipping Details'}"></h2>
+
+        <!-- Error & Success Messages -->
+        <p th:if="${error}" style="color: red;" th:text="${error}"></p>
+        <p th:if="${success}" style="color: green;" th:text="${success}"></p>
+
+        <!-- Shipping Details Form -->
+        <form th:action="@{${shippingDetail != null} ? '/account-service/edit-shipping/' + ${shippingDetail.user_details_id} : '/account-service/add-shipping'}" method="post">
+            <input type="hidden" name="id" th:value="${shippingDetail?.user_details_id}">
+
+            <input type="text" name="recipientName" placeholder="Recipient Name" required th:value="${shippingDetail?.recipient_name}">
+            <input type="text" name="phoneNumber" placeholder="Phone Number" required th:value="${shippingDetail?.phone_number}">
+            <input type="text" name="address" placeholder="Full Address" required th:value="${shippingDetail?.address}">
+            <input type="text" name="detailType" placeholder="Address Type (e.g. Home, Work)" required th:value="${shippingDetail?.detail_type}">
+            <textarea name="additionalInfo" placeholder="Additional Info (Optional)" th:text="${shippingDetail?.additional_info}"></textarea>
+
+            <label>
+                <input type="checkbox" name="isDefault" th:checked="${shippingDetail?.isDefault}"> Set as Default Address
+            </label>
+
+            <button type="submit" class="account-btn" th:text="${shippingDetail != null ? 'Update Shipping Details' : 'Save Shipping Details'}"></button>
+        </form>
+
+        <a th:href="@{/account-service/shipping-details}" class="account-btn">Back to Shipping Details</a>
+    </div>
+
+    <th:block th:replace="~{accountServicesHeader :: accountServicesHeader-scripts}"></th:block>
+</body>
+</html>

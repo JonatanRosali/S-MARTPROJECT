@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Details</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{/account-service.css}">
+</head>
+<body>
+    <!-- Load the Account Services Header -->
+    <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
+
+    <div class="shipping-container">
+        <h2>Shipping Details</h2>
+
+        <!-- Dynamically Loaded List of Shipping Details -->
+        <div th:if="${userDetailsList != null and not #lists.isEmpty(userDetailsList)}">
+            <div th:each="detail : ${userDetailsList}" class="shipping-card">
+                <p class="recipient-name">
+                    <strong th:text="${detail.recipient_name}"></strong>
+                    <span th:if="${detail.detail_type != null}" th:text="' / ' + ${detail.detail_type}"></span>
+                    <span th:if="${detail.phone_number != null}" th:text="' (' + ${detail.phone_number} + ')'"></span>
+                </p>
+                <p class="address"><strong>Address:</strong> <span th:text="${detail.address}"></span></p>
+
+                <!-- Edit & Remove Buttons -->
+                <div class="shipping-actions">
+                    <a th:href="@{/account-service/edit-shipping/{id}(id=${detail.user_details_id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/account-service/remove-shipping/{id}(id=${detail.user_details_id})}" class="remove-btn" onclick="return confirm('Are you sure you want to delete this address?');">Remove</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message if No Shipping Details Exist -->
+        <p th:if="${#lists.isEmpty(userDetailsList)}" class="no-details">No shipping details found. Add a new one below.</p>
+
+        <!-- Add New Shipping Details Button -->
+        <a th:href="@{/account-service/add-shipping}" class="account-btn">Add New Shipping Details</a>
+    </div>
+
+    <th:block th:replace="~{accountServicesHeader :: accountServicesHeader-scripts}"></th:block>
+</body>
+</html>
