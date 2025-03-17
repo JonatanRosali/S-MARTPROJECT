@@ -46,12 +46,19 @@ public class UserController {
             User user = userService.getUserByEmail(email);
             session.setAttribute("user", user);
             session.setAttribute("userImage", user.getProfile_img_url()); // Store in session
-        return "redirect:/home"; 
-    } else {
-        model.addAttribute("error", "Invalid credentials!");
-        return "signin";
+    
+            // Get role_id from UserRole entity
+            if (user.getRole() != null && user.getRole().getRole_id() == 2) {
+                return "redirect:/staff-dashboard"; // Redirect staff to their dashboard
+            } else {
+                return "redirect:/home"; // Default redirection for other users
+            }
+        } else {
+            model.addAttribute("error", "Invalid credentials!");
+            return "signin";
+        }
     }
-    }
+    
 
     @GetMapping("/signup")
     public String signUpPage() {

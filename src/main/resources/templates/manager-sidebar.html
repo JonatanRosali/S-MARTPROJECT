@@ -1,0 +1,39 @@
+<!-- Sidebar Fragment -->
+<div class="sidebar d-flex flex-column">
+    <div class="d-flex align-items-center mb-4">
+        <img th:src="${userImage}" class="rounded-circle" width="50" height="50" style="object-fit: cover;">
+        <div class="ms-3">
+            <p class="fw-bold mb-0" th:text="${user.username}">Username</p>
+            <p class="text-muted small mb-0" th:text="${userRole}">Role</p> 
+        </div>
+    </div>                         
+
+    <ul class="nav flex-column">
+        <!-- General Section -->
+        <li class="fw-bold text-secondary mt-3">General</li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/staff-dashboard}">📊 Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/account-service}">👤 Manage Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/home}">🛍️ Shop</a>
+        </li>
+
+        <!-- Management Section -->
+        <li class="fw-bold text-secondary mt-3">Management</li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">📦 Manage Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/manage-categories}">📂 Manage Categories</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">🎉 Manage Promotions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">📑 Manage Orders</a>
+        </li>
+    </ul>
+</div>

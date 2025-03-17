@@ -126,6 +126,9 @@ public class UserService {
         }
         return false;
     }
+    public long countUsersByRole(int roleId) {
+        return userRepo.countUsersByRoleId(roleId);
+    }
     
 
 }
