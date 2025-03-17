@@ -23,8 +23,7 @@ public class Product {
     private String product_description;
     private double price;
     private double review;
-
-    
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -39,6 +38,15 @@ public class Product {
     public Product() {
     }
 
+    public Product(String product_name, String product_description, double price, double review, int quantity, Category category) {
+        this.product_name = product_name;
+        this.product_description = product_description;
+        this.price = price;
+        this.review = review;
+        this.quantity = quantity;
+        this.category = category;
+    }
+    
     public int getProduct_id() {
         return product_id;
     }
@@ -76,6 +84,13 @@ public class Product {
 
     public void setReview(double review) {
         this.review = review;
+    }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public Category getCategory() {
