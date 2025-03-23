@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import sat301.s_martproject.model.Cart;
 import sat301.s_martproject.model.CartDetails;
@@ -44,7 +45,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/product/{id}")
-    public String productDetail(@PathVariable int id, Model model, HttpSession session) {
+    public String productDetail(@PathVariable int id, Model model, HttpSession session, HttpServletRequest request) {
 
         User user = (User) session.getAttribute("user");
         List<Category> categories = categoryRepo.findAll();
@@ -80,6 +81,9 @@ public class ProductController {
         }
         model.addAttribute("categories", categories);
         model.addAttribute("product", product);
+        model.addAttribute("currentUri", request.getRequestURI());
+        int userRoleId = (user != null && user.getRole() != null) ? user.getRole().getRole_id() : 0;
+        model.addAttribute("userRoleId", userRoleId);
         return "productDetail";
     }
     private boolean isUserStaff(HttpSession session) {

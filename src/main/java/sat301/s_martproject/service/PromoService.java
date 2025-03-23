@@ -137,4 +137,19 @@ public class PromoService {
         }
         return false;
     }
+    public Optional<Promo> getPromoByCode(String code) {
+        if (code == null || code.isBlank()) return Optional.empty();
+        return promoRepo.findByPromo_Code(code.trim()); // exact match
+    }
+    
+
+    /**
+     * Calculates the discount from the promo.
+     */
+    public double calculateDiscount(Promo promo, double cartTotal) {
+        if (promo == null) return 0.0;
+
+        double discount = cartTotal * (promo.getDiscount() / 100.0);
+        return discount; 
+    }
 }

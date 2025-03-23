@@ -5,19 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M-Commerce</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+.promo-carousel {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    touch-action: pan-y; /* Prevents vertical scrolling conflicts */
+}
+
+/* ✅ Container for All Slides */
+.promo-container {
+    display: flex;
+    width: 100%;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
+
+/* ✅ Individual Slide */
+.promo-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+}
+
+/* ✅ Full-Screen Responsive Image (Fixed Height) */
+.promo-image {
+    width: 100%;
+    height: 350px; /* Fixed height */
+    object-fit: cover;
+    user-select: none; /* Prevent accidental selection */
+    pointer-events: none; /* Avoid accidental clicks while swiping */
+}
+
+/* ✅ Mobile Optimization */
+@media screen and (max-width: 768px) {
+    .promo-image {
+        height: 250px; /* Adjust height for smaller screens */
+    }
+}
+.out-of-stock {
+    position: relative;
+    background: rgba(255, 0, 0, 0.1); /* Light red overlay */
+    opacity: 0.8;
+}
+
+/* ✅ Keep Product Name and Image Clickable */
+.out-of-stock a {
+    pointer-events: auto; /* Allow clicks */
+}
+
+/* ✅ Still Hide "Add to Cart" */
+.out-of-stock .cart-icon {
+    display: none;
+}
+
+/* ✅ Show 'Out of Stock' Badge */
+.out-of-stock::after {
+    content: "OUT OF STOCK";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(227, 241, 18, 0.747);
+    color: white;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+    </style>
 </head>
 <body>
     <div th:replace="~{header :: header}"></div>
+    <!-- ✅ Full-Width, Auto-Scrolling Promo Carousel -->
 
-    <div class="carousel">
-        <div>Promotion Image #1</div>
-        <div class="carousel-indicators">
-            <div class="active"></div>
-            <div></div>
-            <div></div>
-            <div></div>
+    <div th:if="${not #lists.isEmpty(promotions)}" class="promo-carousel">
+        <div class="promo-container" id="promoContainer">
+            <div class="promo-slide" th:each="promo : ${promotions}">
+                <img th:src="${promo.promo_img_url}" alt="Promotion" class="promo-image">
+            </div>
         </div>
     </div>
+
+
 
 
     <section>
@@ -31,35 +104,46 @@
     </section>
     <section>
         <div class="section-title">SHOP NOW</div>
-        <div class="shop-now">
-            <div th:each="category : ${categories}" class="category-section" th:id="${category.category_name}">
-                <div class="category-title" th:text="${category.category_name}"></div>
-                <div class="products">
-                    <div th:each="product : ${category.products}" class="card product">
-                        <a th:href="@{/product/{id}(id=${product.product_id})}" style="display: block;">
-                            <img th:src="${product.mainImage != null ? product.mainImage.product_img_url : 'placeholder.png'}" 
-                                 alt="Product Image">
-                        </a>
-                        <a th:href="@{/product/{id}(id=${product.product_id})}" 
-                           th:text="${product.product_name}" 
-                           style="text-decoration: none; color: inherit; display: block; font-weight: bold;">
-                        </a>
-                        <div>
-                            <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                <span th:if="${star <= product.review}">⭐</span>
-                                <span th:if="${star > product.review}">☆</span>
-                            </span>
+            <div class="shop-now">
+                <div th:each="category : ${categories}" class="category-section" th:id="${category.category_name}">
+                    <div class="category-title" th:text="${category.category_name}"></div>
+                        <div class="products">
+                            <div th:each="product : ${category.products}" 
+                            class="card product" 
+                            th:classappend="${product.quantity <= 0} ? 'out-of-stock'">
+                        
+                            <!-- ✅ Product Image Still Clickable -->
+                            <a th:href="@{/product/{id}(id=${product.product_id})}" style="display: block;">
+                                <img th:src="${product.mainImage != null ? product.mainImage.product_img_url : 'placeholder.png'}" 
+                                        alt="Product Image">
+                            </a>
+                            
+                            <!-- ✅ Product Name Still Clickable -->
+                            <a th:href="@{/product/{id}(id=${product.product_id})}" 
+                                th:text="${product.product_name}" 
+                                style="text-decoration: none; color: inherit; display: block; font-weight: bold;">
+                            </a>
+                            
+                            <div>
+                                <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                    <span th:if="${star <= product.review}">⭐</span>
+                                    <span th:if="${star > product.review}">☆</span>
+                                </span>
+                            </div>
+                            
+                            <div class="price" th:text="'$' + ${product.price}"></div>
+                        
+                            <!-- ❌ Hide 'Add to Cart' When Out of Stock -->
+                            <a th:if="${session.user != null and product.quantity > 0}" 
+                                th:attr="onclick=|addToCart(${product.product_id})|">
+                                <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
+                            </a>
+                            
+                            <a th:if="${session.user == null and product.quantity > 0}" 
+                                onclick="showSignInWarning()">
+                                <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
+                            </a>
                         </div>
-                        <div class="price" th:text="'$' + ${product.price}"></div>
-    
-                        <a th:if="${session.user != null}" 
-                           th:attr="onclick=|addToCart(${product.product_id})|">
-                            <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
-                        </a>
-                        <a th:if="${session.user == null}" 
-                           onclick="showSignInWarning()">
-                            <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
-                        </a>
                     </div>
                 </div>
             </div>
@@ -80,5 +164,56 @@ function showSignInWarning() {
 
     window.location.href = "/signin";
 }
+
+
+window.onload = function () {
+    let currentIndex = 0;
+    const container = document.querySelector(".promo-container");
+    const slides = document.querySelectorAll(".promo-slide");
+    let startX = 0;
+    let isSwiping = false;
+
+    // ✅ Auto-Scroll Every 4 Seconds
+    function autoScroll() {
+        if (!isSwiping) {
+            currentIndex = (currentIndex + 1) % slides.length;
+            updateSlide();
+        }
+    }
+    setInterval(autoScroll, 4000);
+
+    // ✅ Update Slide Position
+    function updateSlide() {
+        container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    // ✅ Handle Touch Start
+    container.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        isSwiping = true;
+    });
+
+    // ✅ Handle Touch Move
+    container.addEventListener("touchmove", (e) => {
+        let diffX = e.touches[0].clientX - startX;
+
+        if (Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+                currentIndex = (currentIndex - 1 + slides.length) % slides.length; // Swipe Right
+            } else {
+                currentIndex = (currentIndex + 1) % slides.length; // Swipe Left
+            }
+            updateSlide();
+            isSwiping = false; // Reset swiping
+        }
+    });
+
+    // ✅ Handle Touch End
+    container.addEventListener("touchend", () => {
+        isSwiping = false;
+    });
+};
+
+
 
 </script>

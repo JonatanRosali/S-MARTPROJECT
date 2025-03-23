@@ -4,9 +4,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sat301.s_martproject.model.Category;
+import sat301.s_martproject.model.OrderStatus;
 import sat301.s_martproject.model.PaymentType;
 import sat301.s_martproject.model.UserRole;
 import sat301.s_martproject.repository.CategoryRepo;
+import sat301.s_martproject.repository.OrderStatusRepo;
 import sat301.s_martproject.repository.PaymentTypeRepo;
 import sat301.s_martproject.repository.UserRoleRepo;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public class DatabaseSeeder {
 
     @Bean
-    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo) {
+    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo, OrderStatusRepo orderStatusRepo) {
         return args -> {
             // Seed user_role table
             if (userRoleRepo.count() == 0) { // Only insert if empty
@@ -49,6 +51,15 @@ public class DatabaseSeeder {
                 );
                 paymentTypeRepo.saveAll(types);
             }
+            if (orderStatusRepo.count() == 0) {
+                List<OrderStatus> statuses = List.of(
+                        new OrderStatus("Pending"),
+                        new OrderStatus("Confirmed"),
+                        new OrderStatus("Delivered"),
+                        new OrderStatus("Completed")
+                );
+                orderStatusRepo.saveAll(statuses);
+            };
         };
     }
 }

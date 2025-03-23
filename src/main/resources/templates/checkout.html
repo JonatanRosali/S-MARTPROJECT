@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #81d4ac;
+            padding: 10px;
+            position: relative;
+            height: 5vh;
+            display: flex;
+            align-items: center;
+        }
+
+        header .back-btn {
+            font-size: 1.5em;
+            color: white;
+            text-decoration: none;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        header .title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: white;
+            margin: 0;
+            text-align: center;
+        }
+
+        .checkout-container {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .section {
+            margin-top: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .checkout-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 15px;
+        }
+
+        .checkout-item-details {
+            flex-grow: 1;
+        }
+
+        select, input[type="text"], button {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #81d4ac;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #68b894;
+        }
+
+        h1, h2 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        .empty-msg {
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a th:href="@{/home}" class="back-btn">&larr;</a>
+        <p class="title">Checkout Order</p>
+    </header>
+
+    <div class="checkout-container">
+        <h1>Checkout</h1>
+
+        <!-- ✅ Error message -->
+        <p th:if="${error}" style="color: red;" th:text="${error}"></p>
+
+        <form method="post" th:action="@{/checkout}">
+            <!-- ✅ Shipping Address Section -->
+            <div class="section">
+                <h2>Shipping Address</h2>
+                <th:block th:if="${#lists.isEmpty(shippingList)}">
+                    <p class="empty-msg">No shipping address found.</p>
+                    <a th:href="@{/account-service/add-shipping}">
+                        <button type="button">Add New Address</button>
+                    </a>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(shippingList)}">
+                    <select name="shippingId" required>
+                        <option value="" disabled selected>Select shipping address</option>
+                        <option th:each="address : ${shippingList}"
+                        th:value="${address.user_details_id}"
+                        th:selected="${address.user_details_id == defaultShippingId}"
+                        th:text="${address.recipient_name + ' - ' + address.address + ' (' + address.detail_type + ')'}">
+                        </option>
+                                  
+                    </select>
+                    <a th:href="@{/account-service/add-shipping}">
+                        <button type="button" style="margin-top: 10px;">Add New Address</button>
+                    </a>
+                </th:block>
+            </div>
+
+            <!-- ✅ Cart Items Section -->
+            <div class="section">
+                <h2>Your Cart</h2>
+                <th:block th:if="${#lists.isEmpty(cartItems)}">
+                    <p class="empty-msg">Your cart is empty.</p>
+                </th:block>
+                <th:block th:each="item : ${cartItems}">
+                    <div class="checkout-item">
+                        <img th:src="${item.product.mainImage != null ? item.product.mainImage.product_img_url : '/images/placeholder.png'}"
+                             alt="Product Image">
+                        <div class="checkout-item-details">
+                            <p><strong th:text="${item.product.product_name}">Product Name</strong></p>
+                            <p>Quantity: <span th:text="${item.quantity}">1</span></p>
+                            <p>Subtotal: $<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">0.00</span></p>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <!-- ✅ Promo Code -->
+            <div class="section">
+                <h2>Promo Code</h2>
+                <input type="text" id="promoCodeInput" name="promoCode" placeholder="Enter promo code">
+                <p id="promoFeedback" class="empty-msg"></p>
+                
+            </div>
+
+            <!-- ✅ Payment Method -->
+            <div class="section">
+                <h2>Payment Method</h2>
+                <select name="paymentTypeId" required>
+                    <option value="" disabled selected>Select payment type</option>
+                    <option th:each="payment : ${paymentTypes}"
+                            th:value="${payment.payment_id}"
+                            th:text="${payment.name}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- ✅ Final Summary -->
+            <div class="section total-summary">
+                <p>Subtotal: $<span th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span></p>          
+                <p><strong>Total: $<span id="finalTotalText" th:text="${#numbers.formatDecimal(finalTotal != null ? finalTotal : cartTotalPrice, 1, 2)}">0.00</span>                </strong></p>
+            </div>
+
+            <!-- ✅ Submit -->
+            <button type="submit" th:disabled="${#lists.isEmpty(cartItems)}">Place Order</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const promoInput = document.getElementById("promoCodeInput");
+            const finalTotalText = document.getElementById("finalTotalText");
+            const promoFeedback = document.getElementById("promoFeedback");
+
+            // Make sure initial total shows formatted value
+            finalTotalText.textContent = parseFloat(finalTotalText.textContent).toFixed(2);
+
+            promoInput.addEventListener("input", function () {
+                const code = promoInput.value.trim();
+                if (code === "") {
+                    promoFeedback.textContent = "";
+                    return;
+                }
+
+                fetch("/validate-promo", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({ code })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    finalTotalText.textContent = data.finalTotal.toFixed(2);
+                    if (data.valid) {
+                        promoFeedback.style.color = "green";
+                        promoFeedback.textContent = `Promo applied! -$${data.discount.toFixed(2)}`;
+                    } else {
+                        promoFeedback.style.color = "red";
+                        promoFeedback.textContent = "Invalid promo code";
+                    }
+                })
+                .catch(() => {
+                    promoFeedback.style.color = "red";
+                    promoFeedback.textContent = "Error validating promo.";
+                });
+            });
+        });
+
+    </script>
+    
+</body>
+</html>

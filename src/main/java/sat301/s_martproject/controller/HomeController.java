@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import sat301.s_martproject.model.*;
 import sat301.s_martproject.repository.*;
@@ -31,13 +32,16 @@ public class HomeController {
     @Autowired
     private CartDetailsRepo cartDetailsRepo;
 
+    @Autowired
+    private PromoRepo promoRepo;
+
     @GetMapping("/")
     public String defaultPage() {
         return "redirect:/home";
     }
 
     @GetMapping("/home")
-    public String homePage(Model model, HttpSession session) {
+    public String homePage(Model model, HttpSession session, HttpServletRequest request) {
         User user = (User) session.getAttribute("user");
 
         List<Category> categories = categoryRepo.findAll();
@@ -49,9 +53,17 @@ public class HomeController {
             category.setProducts(products);
         }
 
+        // ✅ Fetch only promotions that are active and have an image
+        List<Promo> promotions = promoRepo.findByDisplayTrue();
+        model.addAttribute("promotions", promotions);
+
         model.addAttribute("categories", categories);
         model.addAttribute("session.user", user);
         model.addAttribute("session.userImage", session.getAttribute("userImage"));
+        model.addAttribute("currentUri", request.getRequestURI());
+        
+        int userRoleId = (user != null && user.getRole() != null) ? user.getRole().getRole_id() : 0;
+        model.addAttribute("userRoleId", userRoleId);
 
         // ✅ Load Cart Data (If User is Logged In)
         if (user != null) {
@@ -79,6 +91,7 @@ public class HomeController {
 
         return "home"; 
     }
+
 
     // ✅ AJAX: Add to Cart
     @PostMapping("/cart/add/{productId}")
