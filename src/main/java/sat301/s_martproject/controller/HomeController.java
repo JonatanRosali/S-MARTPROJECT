@@ -175,4 +175,96 @@ public class HomeController {
         response.put("cartTotalPrice", totalPrice);
         return response;
     }
+    @GetMapping("/search")
+    public String publicSearch(@RequestParam("keyword") String keyword, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+    
+        // ✅ Search Products
+        List<Product> results = productRepo.searchProducts(keyword);
+        for (Product product : results) {
+            product.setImages(productImageRepo.findByProduct(product));
+        }
+    
+        // ✅ Load Cart Info (copied from /home)
+        if (user != null) {
+            Cart cart = cartRepo.findByUser(user);
+            if (cart != null) {
+                List<CartDetails> cartItems = cartDetailsRepo.findByCart(cart);
+                int cartTotal = cartItems.stream().mapToInt(CartDetails::getQuantity).sum();
+                double cartTotalPrice = cartItems.stream()
+                    .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
+                    .sum();
+    
+                model.addAttribute("cartItems", cartItems);
+                model.addAttribute("cartTotal", cartTotal);
+                model.addAttribute("cartTotalPrice", cartTotalPrice);
+            } else {
+                model.addAttribute("cartItems", null);
+                model.addAttribute("cartTotal", 0);
+                model.addAttribute("cartTotalPrice", 0);
+            }
+        } else {
+            model.addAttribute("cartItems", null);
+            model.addAttribute("cartTotal", 0);
+            model.addAttribute("cartTotalPrice", 0);
+        }
+    
+        model.addAttribute("results", results);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("session.user", user);
+        model.addAttribute("session.userImage", session.getAttribute("userImage"));
+        model.addAttribute("currentUri", "/search?keyword=" + keyword);
+    
+        return "search";
+    }
+    @GetMapping("/category/{id}")
+    public String categoryPage(@PathVariable("id") int categoryId, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        Category category = categoryRepo.findById(categoryId).orElse(null);
+        if (category == null) {
+            return "redirect:/home";
+        }
+
+        // ✅ Load products in this category
+        List<Product> products = productRepo.findByCategory(category);
+        for (Product product : products) {
+            product.setImages(productImageRepo.findByProduct(product));
+        }
+
+        // ✅ Load cart info
+        if (user != null) {
+            Cart cart = cartRepo.findByUser(user);
+            if (cart != null) {
+                List<CartDetails> cartItems = cartDetailsRepo.findByCart(cart);
+                int cartTotal = cartItems.stream().mapToInt(CartDetails::getQuantity).sum();
+                double cartTotalPrice = cartItems.stream()
+                    .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
+                    .sum();
+
+                model.addAttribute("cartItems", cartItems);
+                model.addAttribute("cartTotal", cartTotal);
+                model.addAttribute("cartTotalPrice", cartTotalPrice);
+            } else {
+                model.addAttribute("cartItems", null);
+                model.addAttribute("cartTotal", 0);
+                model.addAttribute("cartTotalPrice", 0);
+            }
+        } else {
+            model.addAttribute("cartItems", null);
+            model.addAttribute("cartTotal", 0);
+            model.addAttribute("cartTotalPrice", 0);
+        }
+        model.addAttribute("category", category);
+        model.addAttribute("results", products); // 🔄 use same "results" key as /search
+        model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("session.user", user);
+        model.addAttribute("session.userImage", session.getAttribute("userImage"));
+        model.addAttribute("currentUri", "/category/" + categoryId);
+
+        return "category"; // ✅ next: category.html
+    }
+
+
 }

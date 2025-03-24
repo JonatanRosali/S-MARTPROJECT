@@ -1,7 +1,10 @@
 <header th:fragment="header">
     <div class="menu" onclick="openPanel('menu-panel')">&#9776;</div>
-    <input type="text" placeholder="Search...">
-
+    <form method="GET" action="/search" style="flex: 1; display: flex; justify-content: center;">
+        <input type="text" name="keyword" class="search-input" placeholder="Search..." required>
+    </form>
+    
+    
     <!-- ✅ Hide Cart Button on Checkout Page -->
     <div th:if="${not (currentUri != null and currentUri.contains('/checkout'))}" class="cart" onclick="openPanel('cart-panel')">
         🛒(<span id="cart-count" th:text="${cartTotal}">0</span>)

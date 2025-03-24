@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Browse</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        .out-of-stock {
+            position: relative;
+            background: rgba(255, 0, 0, 0.1);
+            opacity: 0.8;
+        }
+        
+        .out-of-stock a {
+            pointer-events: auto;
+        }
+        
+        .out-of-stock .cart-icon {
+            display: none;
+        }
+        
+        .out-of-stock::after {
+            content: "OUT OF STOCK";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(227, 241, 18, 0.747);
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .category-hero {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .category-hero img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .category-hero h2 {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        </style>
+        
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<a href="/home"style="text-decoration: none; color: inherit; display: block; ">← Back to Home</a>
+<section class="category-hero">
+    <img th:src="@{${category.category_img_url}}" alt="Category Banner">
+    <h2 th:text="${category.category_name}"></h2>
+</section>
+
+<section>
+
+    <div class="products">
+        <div th:each="product : ${results}" class="card product" 
+             th:classappend="${product.quantity <= 0} ? 'out-of-stock'">
+            
+            <a th:href="@{/product/{id}(id=${product.product_id})}">
+                <img th:src="${product.mainImage != null ? product.mainImage.product_img_url : '/images/placeholder.png'}"
+                     alt="Product Image">
+            </a>
+
+            <a th:href="@{/product/{id}(id=${product.product_id})}" 
+               th:text="${product.product_name}" 
+               style="text-decoration: none; color: inherit; display: block; font-weight: bold;"></a>
+
+            <div>
+                <span th:each="star : ${#numbers.sequence(1, 5)}">
+                    <span th:if="${star <= product.review}">⭐</span>
+                    <span th:if="${star > product.review}">☆</span>
+                </span>
+            </div>
+
+            <div class="price" th:text="'$' + ${product.price}"></div>
+
+            <a th:if="${session.user != null and product.quantity > 0}" 
+               th:attr="onclick=|addToCart(${product.product_id})|">
+                <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
+            </a>
+
+            <a th:if="${session.user == null and product.quantity > 0}" 
+               onclick="showSignInWarning()">
+                <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">
+            </a>
+        </div>
+    </div>
+
+    <p th:if="${results.isEmpty()}" class="text-center">No products found matching "<span th:text="${keyword}"></span>"</p>
+</section>
+
+<div th:replace="~{header :: header-scripts}"></div>
+<script>
+    function showSignInWarning() {
+        let userChoice = confirm("⚠️ You need to sign in to add items to your cart.\n\nClick 'OK' to Sign in or 'Cancel' to stay on this page.");
+        if (userChoice) {
+            window.location.href = "/signin";
+        }
+    }
+    </script>
+    
+</body>
+</html>

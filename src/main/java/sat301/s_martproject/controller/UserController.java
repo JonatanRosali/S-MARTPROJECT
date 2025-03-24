@@ -20,8 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import sat301.s_martproject.model.Order;
+import sat301.s_martproject.model.OrderList;
 import sat301.s_martproject.model.User;
 import sat301.s_martproject.model.UserDetails;
+import sat301.s_martproject.repository.OrderListRepo;
+import sat301.s_martproject.repository.OrderRepo;
 import sat301.s_martproject.repository.UserDetailsRepo;
 import sat301.s_martproject.service.AuthenticateService;
 import sat301.s_martproject.service.UserService;
@@ -35,6 +39,11 @@ public class UserController {
     private AuthenticateService authenticateService;
     @Autowired
     private UserDetailsRepo userDetailsRepo;
+    @Autowired
+    private OrderRepo orderRepo;
+    @Autowired
+    private OrderListRepo orderListRepo;
+
     @GetMapping("/signin")
     public String signInPage() {
         return "signin"; 
@@ -333,7 +342,36 @@ public class UserController {
         return "redirect:/account-service/shipping-details";
     }
 
-    
+
+    @GetMapping("/account-service/order-history")
+    public String viewOrderHistory(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/signin"; // Redirect if not logged in
+        }
+
+        List<Order> orders = orderRepo.findByUser(user);
+        model.addAttribute("orders", orders);
+        return "order-history";
+    }
+    @GetMapping("/order-history/details/{id}")
+    public String viewUserOrderDetails(@PathVariable Long id, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/signin";
+
+        Order order = orderRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
+
+        // Ensure the user owns the order
+        if (order.getUser().getUser_id() != user.getUser_id()) {
+            return "redirect:/account-service/view-history";
+        }
+        List<OrderList> items = orderListRepo.findByOrder(order);
+
+        model.addAttribute("order", order);
+        model.addAttribute("orderItems", items);
+        model.addAttribute("user", user); // For sidebar info
+        return "order-history-details";
+    }
 
 
 }

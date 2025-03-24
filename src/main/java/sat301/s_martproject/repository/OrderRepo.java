@@ -12,8 +12,12 @@ import java.util.List;
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user); // ✅ simple and correct
-    
+
     @Query("SELECT COUNT(o) > 0 FROM Order o WHERE o.total_amount = :amount AND o.status.status_id = :statusId")
     boolean existsDuplicateTotal(@Param("amount") double amount, @Param("statusId") int statusId);
+
+    @Query("SELECT o FROM Order o WHERE o.status.status_id = :statusId ORDER BY o.order_date DESC")
+    List<Order> findByStatus_Status_id(@Param("statusId") int statusId);
+
 
 }
