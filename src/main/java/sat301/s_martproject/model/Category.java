@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private int category_id;
     private String category_name;
     private String category_img_url;

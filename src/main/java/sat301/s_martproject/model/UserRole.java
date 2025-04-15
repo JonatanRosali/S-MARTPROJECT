@@ -54,8 +54,5 @@ public class UserRole {
     public void setUsers(List<User> users) {
         this.users = users;
     }
-    public UserRole orElseThrow(Object object) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-    }
+
 }

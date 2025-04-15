@@ -20,8 +20,8 @@ public class DatabaseSeeder {
     @Bean
     CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo, OrderStatusRepo orderStatusRepo) {
         return args -> {
-            // Seed user_role table
-            if (userRoleRepo.count() == 0) { // Only insert if empty
+
+            if (userRoleRepo.count() == 0) { 
                 List<UserRole> roles = List.of(
                         new UserRole(1,"Customer", "Customer purchase roles"),
                         new UserRole(2,"Staff", "Staff store management role"),
@@ -30,8 +30,7 @@ public class DatabaseSeeder {
                 userRoleRepo.saveAll(roles);
             }
 
-            // Seed category table
-            if (categoryRepo.count() == 0) { // Only insert if empty
+            if (categoryRepo.count() == 0) { 
                 List<Category> categories = List.of(
                         new Category("Dairy", "/images/CategoryDairy.png"),
                         new Category("Meats", "/images/CategoryMeats.png"),
@@ -43,7 +42,7 @@ public class DatabaseSeeder {
                 categoryRepo.saveAll(categories);
             }
 
-            if (paymentTypeRepo.count() == 0) { // Only insert if empty
+            if (paymentTypeRepo.count() == 0) {
                 List<PaymentType> types = List.of(
                         new PaymentType("WeChat", "Wechat application payment"),
                         new PaymentType("Alipay", "Alipay application payment"),

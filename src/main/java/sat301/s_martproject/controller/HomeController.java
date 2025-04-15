@@ -53,7 +53,6 @@ public class HomeController {
             category.setProducts(products);
         }
 
-        // ✅ Fetch only promotions that are active and have an image
         List<Promo> promotions = promoRepo.findByDisplayTrue();
         model.addAttribute("promotions", promotions);
 
@@ -65,7 +64,6 @@ public class HomeController {
         int userRoleId = (user != null && user.getRole() != null) ? user.getRole().getRole_id() : 0;
         model.addAttribute("userRoleId", userRoleId);
 
-        // ✅ Load Cart Data (If User is Logged In)
         if (user != null) {
             Cart cart = cartRepo.findByUser(user);
             if (cart != null) {
@@ -93,7 +91,6 @@ public class HomeController {
     }
 
 
-    // ✅ AJAX: Add to Cart
     @PostMapping("/cart/add/{productId}")
     @ResponseBody
     public Map<String, Object> addToCart(@PathVariable int productId, HttpSession session) {
@@ -128,7 +125,6 @@ public class HomeController {
         return getCartSummary(cart);
     }
 
-    // ✅ AJAX: Remove from Cart
     @PostMapping("/cart/remove/{productId}")
     @ResponseBody
     public Map<String, Object> removeFromCart(@PathVariable int productId, HttpSession session) {
@@ -185,7 +181,6 @@ public class HomeController {
             product.setImages(productImageRepo.findByProduct(product));
         }
     
-        // ✅ Load Cart Info (copied from /home)
         if (user != null) {
             Cart cart = cartRepo.findByUser(user);
             if (cart != null) {
@@ -227,13 +222,11 @@ public class HomeController {
             return "redirect:/home";
         }
 
-        // ✅ Load products in this category
         List<Product> products = productRepo.findByCategory(category);
         for (Product product : products) {
             product.setImages(productImageRepo.findByProduct(product));
         }
 
-        // ✅ Load cart info
         if (user != null) {
             Cart cart = cartRepo.findByUser(user);
             if (cart != null) {
@@ -257,13 +250,13 @@ public class HomeController {
             model.addAttribute("cartTotalPrice", 0);
         }
         model.addAttribute("category", category);
-        model.addAttribute("results", products); // 🔄 use same "results" key as /search
+        model.addAttribute("results", products); 
         model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("session.user", user);
         model.addAttribute("session.userImage", session.getAttribute("userImage"));
         model.addAttribute("currentUri", "/category/" + categoryId);
 
-        return "category"; // ✅ next: category.html
+        return "category"; 
     }
 
 

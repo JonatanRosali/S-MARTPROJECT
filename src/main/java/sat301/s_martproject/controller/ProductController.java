@@ -50,13 +50,11 @@ public class ProductController {
         User user = (User) session.getAttribute("user");
         List<Category> categories = categoryRepo.findAll();
 
-        // Fetch Product Details
         Product product = productRepo.findById(id).orElse(null);
         if (product != null) {
-            product.setImages(productImageRepo.findByProduct(product)); // Load product images
+            product.setImages(productImageRepo.findByProduct(product)); 
         }
 
-        // ✅ Load Cart Data (Same as HomeController)
         if (user != null) {
             Cart cart = cartRepo.findByUser(user);
             if (cart != null) {
@@ -91,9 +89,6 @@ public class ProductController {
         return user != null && user.getRole() != null && user.getRole().getRole_id() == 2;
     }
 
-    /**
-     * ✅ Helper Method: Add User Data to Model
-     */
     private void addUserAttributesToModel(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
 
@@ -104,9 +99,6 @@ public class ProductController {
         }
     }
 
-    /**
-     * ✅ Display the Manage Products Page
-     */
     @GetMapping("/manage-products")
     public String manageProducts(@RequestParam(value = "search", required = false) String search, HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -124,9 +116,7 @@ public class ProductController {
     
         return "manage-products";
     }
-    /**
-     * ✅ Show Add Product Page
-     */
+
     @GetMapping("/manage-products/add")
     public String addProductPage(HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -137,9 +127,6 @@ public class ProductController {
         return "add-product";
     }
 
-    /**
-     * ✅ Handle Adding a New Product
-     */
     @PostMapping("manage-products/add")
     public String addProduct(@RequestParam String product_name,
                              @RequestParam String product_description,
@@ -172,11 +159,7 @@ public class ProductController {
         return "redirect:/manage-products";
     }
     
-    
 
-    /**
-     * ✅ Show Edit Product Page
-     */
     @GetMapping("/manage-products/edit/{id}")
     public String editProductPage(@PathVariable int id, HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -191,9 +174,7 @@ public class ProductController {
         return "edit-product";
     }
 
-    /**
-     * ✅ Handle Editing a Product
-     */
+
     @PostMapping("/manage-products/edit/{id}")
     public String editProduct(@PathVariable int id,
                             @RequestParam String product_name,
@@ -214,7 +195,6 @@ public class ProductController {
         Category category = categoryRepo.findById(category_id).orElse(null);
         if (category == null) return "redirect:/manage-products";
 
-        // ✅ Validate price, review, quantity
         if (price <= 0 || review < 0 || review > 5 || quantity < 0) {
             model.addAttribute("error", "Invalid product data! Price must be > 0, review 0-5, quantity >= 0.");
             model.addAttribute("product", product);
@@ -222,7 +202,6 @@ public class ProductController {
             return "edit-product";
         }
 
-        // ✅ Update product details
         product.setProduct_name(product_name);
         product.setProduct_description(product_description);
         product.setPrice(price);
@@ -231,12 +210,10 @@ public class ProductController {
         product.setCategory(category);
         productRepo.save(product);
 
-        // ✅ Update Main Image
         if (main_image != null) {
             productService.updateMainImage(product, main_image);
         }
 
-        // ✅ Handle New Image Uploads
         if (product_images != null) {
             productService.saveProductImages(product, product_images);
         }
@@ -252,24 +229,18 @@ public class ProductController {
     }
 
 
-
-    /**
-     * ✅ Handle Product Deletion
-     */
     @GetMapping("/manage-products/delete/{id}")
     public String deleteProduct(@PathVariable int id, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/signin";
 
         Product product = productRepo.findById(id).orElse(null);
         if (product != null) {
-            // ✅ Delete product images from DB and server
             List<ProductImage> images = productImageRepo.findByProduct(product);
             for (ProductImage image : images) {
                 productService.deleteImage(image.getProduct_img_url());
                 productImageRepo.delete(image);
             }
 
-            // ✅ Delete product
             productRepo.delete(product);
         }
 

@@ -54,13 +54,12 @@ public class UserController {
         if (authenticateService.authenticate(email, password)) {
             User user = userService.getUserByEmail(email);
             session.setAttribute("user", user);
-            session.setAttribute("userImage", user.getProfile_img_url()); // Store in session
-    
-            // Get role_id from UserRole entity
+            session.setAttribute("userImage", user.getProfile_img_url()); 
+
             if (user.getRole() != null && user.getRole().getRole_id() == 2) {
-                return "redirect:/staff-dashboard"; // Redirect staff to their dashboard
+                return "redirect:/staff-dashboard"; 
             } else {
-                return "redirect:/home"; // Default redirection for other users
+                return "redirect:/home"; 
             }
         } else {
             model.addAttribute("error", "Invalid credentials!");
@@ -100,7 +99,6 @@ public class UserController {
         session.setAttribute("user", user);
         session.setAttribute("userImage", user.getProfile_img_url());
 
-        // Redirect to home
         return "redirect:/home"; 
     }
 
@@ -108,17 +106,17 @@ public class UserController {
     public String accountServicePage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin";  // Redirect to signin if user is not logged in
+            return "redirect:/signin";  
         }
 
         model.addAttribute("user", user);
-        return "accountService"; // Render the account service page
+        return "accountService"; 
     }
     @GetMapping("/account-service/change-profile-picture")
     public String changeProfilePicture(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Ensure user is logged in
+            return "redirect:/signin";
         }
         model.addAttribute("user", user);
         return "change-profile-picture";
@@ -128,38 +126,32 @@ public class UserController {
     public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile file, HttpSession session, Model model) {
         if (!file.isEmpty()) {
             try {
-                // Ensure the upload directory exists
                 Path uploadPath = Paths.get(UPLOAD_DIR);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
 
-                // Get the current user
                 User user = (User) session.getAttribute("user");
                 if (user != null) {
                     String currentImage = user.getProfile_img_url();
 
-                    // Check if the current image is from /uploads/ before deleting
                     if (currentImage != null && currentImage.startsWith("/uploads/")) {
                         Path oldImagePath = Paths.get(currentImage.substring(1)).toAbsolutePath().normalize();
                         Files.deleteIfExists(oldImagePath);
                     }
 
-                    // Save the new file with a unique name
                     String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                     Path filePath = uploadPath.resolve(fileName);
                     Files.write(filePath, file.getBytes());
 
-                    // Update user's profile image path in the database
                     user.setProfile_img_url("/uploads/" + fileName);
                     userService.updateUser(user);
 
-                    // Update session with new image path
                     session.setAttribute("userImage", "/uploads/" + fileName);
                 }
 
                 model.addAttribute("message", "Profile picture updated successfully!");
-                return "redirect:/account-service"; // Redirect back to account page
+                return "redirect:/account-service"; 
             } catch (IOException e) {
                 model.addAttribute("error", "Failed to upload the image.");
             }
@@ -172,7 +164,7 @@ public class UserController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Clear session
+        session.invalidate();
         return "redirect:/home";
     }
 
@@ -199,57 +191,51 @@ public class UserController {
             HttpSession session,
             Model model) {
 
-        // Get logged-in user
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Ensure user is logged in
+            return "redirect:/signin"; 
         }
 
-        // Verify old password
         if (!userService.checkPassword(user, oldPassword)) {
             model.addAttribute("error", "Incorrect current password!");
             return "change-password";
         }
 
-        // Ensure new passwords match
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New passwords do not match!");
             return "change-password";
         }
 
-        // Ensure password meets security criteria
         if (!userService.isValidPassword(newPassword)) {
             model.addAttribute("error", "Password must be at least 8 characters, include one uppercase letter and one number.");
             return "change-password";
         }
 
-        // Update password and logout user
         userService.updatePassword(user, newPassword);
-        session.invalidate(); // Log out the user for security
+        session.invalidate(); 
 
         model.addAttribute("success", "Password changed successfully! Please log in again.");
-        return "redirect:/signin"; // Redirect to login
+        return "redirect:/signin"; 
     }
     @GetMapping("/account-service/shipping-details")
     public String shippingDetailsPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Redirect if not logged in
+            return "redirect:/signin"; 
         }
 
-        // Fetch shipping details for the user
         List<UserDetails> userDetailsList = userService.getUserShippingDetails(user);
         model.addAttribute("userDetailsList", userDetailsList);
         
-        return "shipping-details"; // Load the shipping details page
+        return "shipping-details"; 
     }
     @GetMapping("/account-service/add-shipping")
     public String addShippingPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Redirect if user is not logged in
+            return "redirect:/signin"; 
         }
-        return "add-shipping"; // Show the add shipping details form
+        return "add-shipping"; 
     }
 
     @PostMapping("/account-service/add-shipping")
@@ -265,25 +251,22 @@ public class UserController {
 
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Redirect if not logged in
+            return "redirect:/signin"; 
         }
-
-        // Check if a default address already exists
         if (isDefault) {
             userService.removeExistingDefaultAddress(user);
         }
 
-        // Save new shipping details
         userService.addShippingDetails(user, recipientName, phoneNumber, address, detailType, additionalInfo, isDefault);
         model.addAttribute("success", "Shipping details added successfully!");
-        return "redirect:/account-service/shipping-details"; // Redirect to list page
+        return "redirect:/account-service/shipping-details"; 
     }
 
     @GetMapping("/account-service/remove-shipping/{id}")
     public String removeShippingDetail(@PathVariable("id") Long id, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Redirect if not logged in
+            return "redirect:/signin"; 
         }
 
         boolean removed = userService.removeShippingDetail(id, user);
@@ -293,17 +276,16 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Failed to remove shipping detail.");
         }
 
-        return "redirect:/account-service/shipping-details"; // Redirect back to list
+        return "redirect:/account-service/shipping-details"; 
     }
     
     @GetMapping("/account-service/edit-shipping/{id}")
     public String editShippingPage(@PathVariable("id") Long id, HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Ensure user is logged in
+            return "redirect:/signin";
         }
     
-        // Find the shipping detail (user already owns it)
         Optional<UserDetails> shippingDetail = userDetailsRepo.findById(id);
     
         if (shippingDetail.isEmpty()) {
@@ -312,7 +294,7 @@ public class UserController {
         }
     
         model.addAttribute("shippingDetail", shippingDetail.get());
-        return "add-shipping"; // Reuse the add form for editing
+        return "add-shipping"; 
     }
     @PostMapping("/account-service/edit-shipping/{id}")
     public String editShippingDetails(
@@ -347,7 +329,7 @@ public class UserController {
     public String viewOrderHistory(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/signin"; // Redirect if not logged in
+            return "redirect:/signin"; 
         }
 
         List<Order> orders = orderRepo.findByUser(user);
@@ -361,7 +343,6 @@ public class UserController {
 
         Order order = orderRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
 
-        // Ensure the user owns the order
         if (order.getUser().getUser_id() != user.getUser_id()) {
             return "redirect:/account-service/view-history";
         }
@@ -369,7 +350,7 @@ public class UserController {
 
         model.addAttribute("order", order);
         model.addAttribute("orderItems", items);
-        model.addAttribute("user", user); // For sidebar info
+        model.addAttribute("user", user); 
         return "order-history-details";
     }
 

@@ -45,7 +45,6 @@ public class UserService {
     }
 
     public boolean isValidPassword(String password) {
-        // Password must have at least 8 characters, 1 uppercase letter, and 1 number
         return password.matches("^(?=.*[A-Z])(?=.*[0-9]).{8,}$");
     }
 
@@ -57,14 +56,12 @@ public class UserService {
         userRepo.save(user);
     }
 
-    // ✅ Verify if old password is correct
     public boolean checkPassword(User user, String rawPassword) {
         return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 
-    // ✅ Update user password securely
     public void updatePassword(User user, String newPassword) {
-        user.setPassword(passwordEncoder.encode(newPassword)); // Encrypt new password
+        user.setPassword(passwordEncoder.encode(newPassword)); 
         userRepo.save(user);
     }
     
@@ -73,14 +70,12 @@ public class UserService {
         return userDetailsRepo.findByUser(user);
     }
 
-    // ✅ Add new shipping details
     public void addShippingDetails(User user, String recipientName, String phoneNumber, String address, 
         String detailType, String additionalInfo, boolean isDefault) {
         UserDetails newDetails = new UserDetails(user, recipientName, detailType, phoneNumber, address, additionalInfo, isDefault);
         userDetailsRepo.save(newDetails);
     }
 
-    // ✅ Ensure only one default address exists
     public void removeExistingDefaultAddress(User user) {
         List<UserDetails> existingDefaults = userDetailsRepo.findByUserAndIsDefault(user, true);
         for (UserDetails detail : existingDefaults) {
@@ -113,7 +108,6 @@ public class UserService {
         if (userDetailsOpt.isPresent()) {
             UserDetails userDetails = userDetailsOpt.get();
     
-            // Update fields
             userDetails.setRecipient_name(recipientName);
             userDetails.setPhone_number(phoneNumber);
             userDetails.setAddress(address);

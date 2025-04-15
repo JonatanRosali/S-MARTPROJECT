@@ -37,7 +37,7 @@ public class CategoryController {
 
     @GetMapping
     public String manageCategories(HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin"; // 🚫 Unauthorized users
+        if (!isUserStaff(session)) return "redirect:/signin";
 
         List<Category> categories = categoryService.getAllCategories();
         Map<Integer, Long> productCounts = categoryService.getProductCountForCategories();
@@ -50,7 +50,7 @@ public class CategoryController {
 
     @GetMapping("/add")
     public String addCategoryPage(HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin"; // 🚫 Unauthorized users
+        if (!isUserStaff(session)) return "redirect:/signin";
 
         addUserAttributesToModel(session, model);
         return "add-category";
@@ -61,7 +61,7 @@ public class CategoryController {
                               @RequestParam("category_img") MultipartFile category_img, 
                               HttpSession session,
                               Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin"; // 🚫 Unauthorized users
+        if (!isUserStaff(session)) return "redirect:/signin";
     
         boolean success = categoryService.addCategory(category_name, category_img);
         if (!success) {
@@ -75,7 +75,7 @@ public class CategoryController {
 
     @GetMapping("/edit/{id}")
     public String editCategoryPage(@PathVariable int id, HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin"; // 🚫 Unauthorized users
+        if (!isUserStaff(session)) return "redirect:/signin"; 
 
         Optional<Category> category = categoryService.getCategoryById(id);
         if (category.isEmpty()) {
@@ -107,7 +107,7 @@ public class CategoryController {
             categoryService.deleteCategory(id);
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
-            return manageCategories(session, model); // Reload category list with error message
+            return manageCategories(session, model);
         }
     
         return "redirect:/manage-categories";

@@ -29,13 +29,11 @@ public class OrderController {
     @Autowired 
     private OrderListRepo orderListRepo;
 
-    // 🔐 Check if user is staff
     private boolean isUserStaff(HttpSession session) {
         User user = (User) session.getAttribute("user");
         return user != null && user.getRole() != null && user.getRole().getRole_id() == 2;
     }
 
-    // 👤 Add user info for sidebar
     private void addUserAttributesToModel(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
@@ -45,7 +43,6 @@ public class OrderController {
         }
     }
 
-    // 📦 View orders by status
     @GetMapping
     public String viewOrders(@RequestParam(defaultValue = "1") int status, Model model, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/home";
@@ -54,7 +51,6 @@ public class OrderController {
         model.addAttribute("orders", orders);
         model.addAttribute("currentStatus", status);
     
-        // ✅ Move session message to model and clear it
         Object stockError = session.getAttribute("stockError");
         if (stockError != null) {
             model.addAttribute("stockError", stockError);
@@ -66,8 +62,6 @@ public class OrderController {
     }
     
     
-
-    // 🔍 Order details
     @GetMapping("/details/{id}")
     public String viewOrderDetails(@PathVariable Long id, Model model, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/home";
@@ -82,7 +76,6 @@ public class OrderController {
     }
     
 
-    // ✅ Confirm order
     @PostMapping("/confirm/{id}")
     public String confirmOrder(@PathVariable Long id, HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/home";
@@ -110,31 +103,29 @@ public class OrderController {
             item.getProduct().setQuantity(item.getProduct().getQuantity() - item.getQuantity());
         }
 
-        order.setStatus(orderStatusRepo.findById(2).orElse(null)); // Confirmed
+        order.setStatus(orderStatusRepo.findById(2).orElse(null));
         orderRepo.save(order);
 
         return "redirect:/manage-orders?status=2";
     }
 
 
-    // 🚚 Mark as delivered
     @PostMapping("/deliver/{id}")
     public String deliverOrder(@PathVariable Long id, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/home";
 
         Order order = orderRepo.findById(id).orElseThrow();
-        order.setStatus(orderStatusRepo.findById(3).orElse(null)); // Delivered
+        order.setStatus(orderStatusRepo.findById(3).orElse(null)); 
         orderRepo.save(order);
         return "redirect:/manage-orders?status=3";
     }
 
-    // ✅ Complete order
     @PostMapping("/complete/{id}")
     public String completeOrder(@PathVariable Long id, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/home";
 
         Order order = orderRepo.findById(id).orElseThrow();
-        order.setStatus(orderStatusRepo.findById(4).orElse(null)); // Completed
+        order.setStatus(orderStatusRepo.findById(4).orElse(null)); 
         orderRepo.save(order);
         return "redirect:/manage-orders?status=4";
     }

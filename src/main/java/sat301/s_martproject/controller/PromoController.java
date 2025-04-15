@@ -37,9 +37,7 @@ public class PromoController{
             model.addAttribute("userImage", user.getProfile_img_url() != null ? user.getProfile_img_url() : "/images/default-profile.png");
         }
     }
-    /**
-     * ✅ Display Manage Promotions Page
-     */
+
     @GetMapping
     public String managePromotions(HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin"; // Ensure user is staff
@@ -51,9 +49,7 @@ public class PromoController{
         return "manage-promotions";
     }
 
-    /**
-     * ✅ Show Add Promo Page
-     */
+
     @GetMapping("/add")
     public String addPromoPage(HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -62,9 +58,6 @@ public class PromoController{
         return "add-promo";
     }
 
-    /**
-     * ✅ Handle Adding a New Promo
-     */
     @PostMapping("/add")
     public String addPromo(@RequestParam String promo_code,
                            @RequestParam double discount,
@@ -75,13 +68,11 @@ public class PromoController{
                            HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/signin";
     
-        // ✅ Validate discount percentage (1-100)
         if (discount <= 0 || discount > 100) {
             model.addAttribute("error", "Discount must be between 1% and 100%.");
             return "add-promo";
         }
     
-        // ✅ Handle Optional Image Upload
         String imageUrl = null;
         if (display && (promoImg == null || promoImg.isEmpty())) {
             model.addAttribute("error", "Promo image is required when display is enabled.");
@@ -93,19 +84,13 @@ public class PromoController{
                 return "add-promo";
             }
         }
-    
-        // ✅ Save Promo
+
         Promo promo = new Promo(promo_code, discount, display, active, imageUrl);
         promoRepo.save(promo);
     
         return "redirect:/manage-promotions";
     }
-    
-    
 
-    /**
-     * ✅ Show Edit Promo Page
-     */
     @GetMapping("/edit/{id}")
     public String editPromoPage(@PathVariable int id, HttpSession session, Model model) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -118,9 +103,7 @@ public class PromoController{
         return "edit-promo";
     }
 
-    /**
-     * ✅ Handle Editing a Promo
-     */
+
     @PostMapping("/edit/{id}")
     public String editPromo(@PathVariable int id,
                             @RequestParam String promo_code,
@@ -134,27 +117,22 @@ public class PromoController{
         Promo promo = promoRepo.findById(id).orElse(null);
         if (promo == null) return "redirect:/manage-promotions";
     
-        // Update promo details
         promo.setPromo_code(promo_code);
         promo.setDiscount(discount);
         promo.setDisplay(display);
         promo.setActive(active);
     
-        // Handle Image Replacement
         if (display) {
             if (promo_img != null && !promo_img.isEmpty()) {
-                // Delete the old image if it exists
                 if (promo.getPromo_img_url() != null) {
                     promoService.deleteImage(promo.getPromo_img_url());
                 }
-                // Upload new image
                 String imageUrl = promoService.uploadImage(promo_img);
                 if (imageUrl != null) {
                     promo.setPromo_img_url(imageUrl);
                 }
             }
         } else {
-            // If not displayed, remove the image
             if (promo.getPromo_img_url() != null) {
                 promoService.deleteImage(promo.getPromo_img_url());
                 promo.setPromo_img_url(null);
@@ -165,11 +143,7 @@ public class PromoController{
         return "redirect:/manage-promotions";
     }
     
-    
 
-    /**
-     * ✅ Activate/Deactivate Promo
-     */
     @GetMapping("/toggle-active/{id}")
     public String toggleActivePromo(@PathVariable int id, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/signin";
@@ -178,9 +152,6 @@ public class PromoController{
         return "redirect:/manage-promotions";
     }
 
-    /**
-     * ✅ Delete a Promo
-     */
     @GetMapping("/delete/{id}")
     public String deletePromo(@PathVariable int id, HttpSession session) {
         if (!isUserStaff(session)) return "redirect:/signin";

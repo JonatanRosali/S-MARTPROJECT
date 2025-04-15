@@ -112,13 +112,11 @@
                             class="card product" 
                             th:classappend="${product.quantity <= 0} ? 'out-of-stock'">
                         
-                            <!-- ✅ Product Image Still Clickable -->
                             <a th:href="@{/product/{id}(id=${product.product_id})}" style="display: block;">
                                 <img th:src="${product.mainImage != null ? product.mainImage.product_img_url : 'placeholder.png'}" 
                                         alt="Product Image">
                             </a>
                             
-                            <!-- ✅ Product Name Still Clickable -->
                             <a th:href="@{/product/{id}(id=${product.product_id})}" 
                                 th:text="${product.product_name}" 
                                 style="text-decoration: none; color: inherit; display: block; font-weight: bold;">
@@ -133,7 +131,6 @@
                             
                             <div class="price" th:text="'$' + ${product.price}"></div>
                         
-                            <!-- ❌ Hide 'Add to Cart' When Out of Stock -->
                             <a th:if="${session.user != null and product.quantity > 0}" 
                                 th:attr="onclick=|addToCart(${product.product_id})|">
                                 <img src="/images/cart-plus.png" alt="Add to Cart" class="cart-icon">

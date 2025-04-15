@@ -19,5 +19,14 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.status.status_id = :statusId ORDER BY o.order_date DESC")
     List<Order> findByStatus_Status_id(@Param("statusId") int statusId);
 
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status.status_id <> :statusId")
+    long countByStatusNot(@Param("statusId") int statusId);
+
+
+    @Query("SELECT COALESCE(SUM(o.total_amount), 0) FROM Order o WHERE o.status.status_id <> :status")
+    double sumSalesByStatusNot(int status);
+
+    @Query("SELECT COALESCE(AVG(o.total_amount), 0) FROM Order o WHERE o.status.status_id <> :status")
+    double avgTransactionByStatusNot(int status);
 
 }

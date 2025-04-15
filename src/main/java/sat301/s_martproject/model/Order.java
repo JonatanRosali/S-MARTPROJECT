@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "orders") // 'order' is a reserved word in SQL
+@Table(name = "orders") 
 public class Order {
 
     @Id
@@ -42,7 +42,6 @@ public class Order {
 
     public Order() {}
 
-    // Getters & Setters
 
     public Long getOrder_id() {
         return order_id;

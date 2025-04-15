@@ -16,7 +16,7 @@ public class UserDetails {
     @Column(nullable = false)
     private String recipient_name;
 
-    private String detail_type; // Example: "Home", "Work", "Other"
+    private String detail_type; // "Home", "Work", "Other"
 
     @Column(nullable = false)
     private String phone_number;

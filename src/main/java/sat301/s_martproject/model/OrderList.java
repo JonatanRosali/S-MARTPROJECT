@@ -24,7 +24,6 @@ public class OrderList {
 
     public OrderList() {}
 
-    // Getters & Setters
 
     public Long getOrder_list_id() {
         return order_list_id;

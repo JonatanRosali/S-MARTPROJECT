@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sat301.s_martproject.model.*;
 import sat301.s_martproject.repository.*;
 import sat301.s_martproject.service.CartService;
+import sat301.s_martproject.service.CurrencyConversionService;
 import sat301.s_martproject.service.PromoService;
 import jakarta.servlet.http.HttpSession;
 
@@ -36,9 +37,10 @@ public class CheckoutController {
     private CartService cartService;
     @Autowired
     private PromoService promoService;
+    @Autowired
+    private CurrencyConversionService conversionService;
 
 
-    // ✅ Show Checkout Page
     @GetMapping("/checkout")
     public String checkoutPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
@@ -49,7 +51,6 @@ public class CheckoutController {
         List<CartDetails> cartItems = cartService.getCartItems(user);
         double total = cartService.calculateCartTotal(cartItems);
     
-        // 👉 Find default shipping address ID
         Long defaultShippingId = shippingList.stream()
             .filter(UserDetails::isDefault)
             .map(UserDetails::getUser_details_id)
@@ -60,7 +61,7 @@ public class CheckoutController {
         model.addAttribute("paymentTypes", paymentTypes);
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("cartTotalPrice", total);
-        model.addAttribute("defaultShippingId", defaultShippingId); // 👈 Add this
+        model.addAttribute("defaultShippingId", defaultShippingId);
     
         return "checkout";
     }
@@ -92,17 +93,15 @@ public class CheckoutController {
         double subtotal = cartService.calculateCartTotal(cartItems);
         double discount = appliedPromo != null ? promoService.calculateDiscount(appliedPromo, subtotal) : 0;
         double baseTotal = subtotal - discount;
-
-        // 🎲 Randomize total (cents) and make it unique among PENDING orders
         double finalTotal;
         int attempts = 0;
         do {
-            int randomCents = new Random().nextInt(20) + 1; // 1 to 20 cents
+            int randomCents = new Random().nextInt(20) + 1; 
             finalTotal = baseTotal + (randomCents / 100.0);
             finalTotal = new BigDecimal(finalTotal).setScale(2, RoundingMode.HALF_UP).doubleValue();
             attempts++;
-            if (attempts > 20) break; // safety fallback
-        } while (orderRepo.existsDuplicateTotal(finalTotal, 1)); // 1 = Pending
+            if (attempts > 20) break; 
+        } while (orderRepo.existsDuplicateTotal(finalTotal, 1)); 
 
 
         Order order = new Order();
@@ -113,7 +112,7 @@ public class CheckoutController {
         order.setUserDetails(shippingDetails);
         order.setPayment(paymentType);
         order.setPromo(appliedPromo);
-        order.setStatus(orderStatusRepo.findById(1).orElse(null)); // 1 = Pending
+        order.setStatus(orderStatusRepo.findById(1).orElse(null)); 
 
         order = orderRepo.save(order);
 
@@ -133,16 +132,23 @@ public class CheckoutController {
 
     }
 
-
-
-    // ✅ Confirmation Page
     @GetMapping("/order/confirmation/{id}")
-    public String showConfirmation(@PathVariable Long id, Model model) {
+    public String showConfirmation(
+            @PathVariable Long id,
+            @RequestParam(name = "currency", defaultValue = "CNY") String currency,  // Default to CNY
+            Model model) {
+
         Order order = orderRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
-    
+
+        double totalAmount = order.getTotal_amount();
+        double convertedTotal = conversionService.convertCurrency(currency, totalAmount); // Convert from CNY
+
         model.addAttribute("orderId", order.getOrder_id());
-        model.addAttribute("orderTotal", String.format("%.2f", order.getTotal_amount()));
+        model.addAttribute("orderTotal", String.format("%.2f", totalAmount));
+        model.addAttribute("convertedTotal", convertedTotal);
+        model.addAttribute("currency", currency);
+
         return "order-confirmation";
     }
     
