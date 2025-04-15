@@ -84,13 +84,13 @@
     <form th:action="@{'/order/confirmation/' + ${orderId}}" method="get">
         <label for="currency">Choose Currency:</label>
         <select name="currency" id="currency">
-            <option value="CNY" th:selected="${currency == 'CNY'}">CNY</option>
-            <option value="USD" th:selected="${currency == 'USD'}">USD</option>
-            <option value="SGD" th:selected="${currency == 'SGD'}">SGD</option>
-            <option value="EUR" th:selected="${currency == 'EUR'}">EUR</option>
-            <option value="IDR" th:selected="${currency == 'IDR'}">IDR</option>
-            <option value="JPY" th:selected="${currency == 'JPY'}">JPY</option>
-            <option value="GBP" th:selected="${currency == 'GBP'}">GBP</option>
+            <option value="CNY" th:selected="${currency == 'CNY'}">🇨🇳 CNY - Chinese Yuan</option>
+            <option value="USD" th:selected="${currency == 'USD'}">🇺🇸 USD - US Dollar</option>
+            <option value="SGD" th:selected="${currency == 'SGD'}">🇸🇬 SGD - Singaporean Dollar</option>
+            <option value="EUR" th:selected="${currency == 'EUR'}">🇪🇺 EUR - Euro</option>
+            <option value="IDR" th:selected="${currency == 'IDR'}">🇮🇩 IDR - Indonesian Rupiah</option>
+            <option value="JPY" th:selected="${currency == 'JPY'}">🇯🇵 JPY - Japanese Yen</option>
+            <option value="GBP" th:selected="${currency == 'GBP'}">🇬🇧 GBP - British Pound</option>
             <!-- Add more if needed -->
         </select>
     </form>
