@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
-    List<Order> findByUser(User user); // ✅ simple and correct
+    List<Order> findByUser(User user); 
 
     @Query("SELECT COUNT(o) > 0 FROM Order o WHERE o.total_amount = :amount AND o.status.status_id = :statusId")
     boolean existsDuplicateTotal(@Param("amount") double amount, @Param("statusId") int statusId);

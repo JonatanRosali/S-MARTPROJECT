@@ -10,6 +10,5 @@ import java.util.List;
 @Repository
 public interface OrderListRepo extends JpaRepository<OrderList, Long> {
     
-    // ✅ Get all order items by order
     List<OrderList> findByOrder(Order order);
 }

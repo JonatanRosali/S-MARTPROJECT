@@ -9,6 +9,6 @@ import sat301.s_martproject.model.User;
 
 public interface UserRepo extends JpaRepository<User, Integer>{
     User findByEmail(String email);
-    @Query("SELECT COUNT(u) FROM User u WHERE u.role.role_id = :roleId") // Directly reference role_id
+    @Query("SELECT COUNT(u) FROM User u WHERE u.role.role_id = :roleId") 
     long countUsersByRoleId(@Param("roleId") int roleId);
 }

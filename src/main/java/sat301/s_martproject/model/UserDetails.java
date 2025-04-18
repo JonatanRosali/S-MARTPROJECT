@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 public class UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_details_id;

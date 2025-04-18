@@ -3,7 +3,6 @@ package sat301.s_martproject.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +28,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserDetails> userDetailsList = new ArrayList<>();
 
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private UserRole role;
@@ -38,6 +36,14 @@ public class User {
 
     public User() {
     }
+    public User(String username, String email, String password, UserRole role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.profile_img_url = "/img/default-profile.png";
+    }
+    
 
     public int getUser_id() {
         return user_id;

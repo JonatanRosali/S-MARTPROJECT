@@ -10,7 +10,7 @@ public class OrderStatus {
     private int status_id;
 
     @Column(nullable = false, unique = true)
-    private String status_name; // Pending, Confirmed, Delivered, Completed
+    private String status_name; // Status List: Pending, Confirmed, Delivered, Completed
 
     public OrderStatus() {}
 

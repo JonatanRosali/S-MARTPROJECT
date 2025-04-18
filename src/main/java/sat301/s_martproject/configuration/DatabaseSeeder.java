@@ -3,13 +3,16 @@ package sat301.s_martproject.configuration;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sat301.s_martproject.model.Category;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import sat301.s_martproject.model.OrderStatus;
 import sat301.s_martproject.model.PaymentType;
+import sat301.s_martproject.model.User;
 import sat301.s_martproject.model.UserRole;
 import sat301.s_martproject.repository.CategoryRepo;
 import sat301.s_martproject.repository.OrderStatusRepo;
 import sat301.s_martproject.repository.PaymentTypeRepo;
+import sat301.s_martproject.repository.UserRepo;
 import sat301.s_martproject.repository.UserRoleRepo;
 
 import java.util.List;
@@ -18,28 +21,15 @@ import java.util.List;
 public class DatabaseSeeder {
 
     @Bean
-    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo, OrderStatusRepo orderStatusRepo) {
+    CommandLineRunner initDatabase(CategoryRepo categoryRepo, UserRoleRepo userRoleRepo, PaymentTypeRepo paymentTypeRepo, OrderStatusRepo orderStatusRepo, UserRepo userRepo) {
         return args -> {
 
             if (userRoleRepo.count() == 0) { 
                 List<UserRole> roles = List.of(
                         new UserRole(1,"Customer", "Customer purchase roles"),
-                        new UserRole(2,"Staff", "Staff store management role"),
-                        new UserRole(3,"Admin", "Management role")
+                        new UserRole(2,"Staff", "Staff store management role")
                 );
                 userRoleRepo.saveAll(roles);
-            }
-
-            if (categoryRepo.count() == 0) { 
-                List<Category> categories = List.of(
-                        new Category("Dairy", "/images/CategoryDairy.png"),
-                        new Category("Meats", "/images/CategoryMeats.png"),
-                        new Category("Snacks", "/images/CategorySnacks.png"),
-                        new Category("Beverages", "/images/CategoryBeverages.png"),
-                        new Category("Produce", "/images/CategoryProduce.png"),
-                        new Category("Bakery", "/images/CategoryBakery.png")
-                );
-                categoryRepo.saveAll(categories);
             }
 
             if (paymentTypeRepo.count() == 0) {
@@ -59,6 +49,16 @@ public class DatabaseSeeder {
                 );
                 orderStatusRepo.saveAll(statuses);
             };
+            if (userRepo.count() == 0) {
+                UserRole adminRole = userRoleRepo.findById(2); 
+                if (adminRole != null) {
+                    List<User> users = List.of(
+                        new User("Admin1", "admin1@smart.com",
+                            new BCryptPasswordEncoder().encode("Admin1234"), adminRole)
+                    );
+                    userRepo.saveAll(users);
+                }
+            }
         };
     }
 }

@@ -1,9 +1,6 @@
 package sat301.s_martproject.model;
 
-
-
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,9 +29,7 @@ public class Product {
     private List<ProductImage> images;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CartDetails> cartDetails;
-
     
-
     public Product() {
     }
 

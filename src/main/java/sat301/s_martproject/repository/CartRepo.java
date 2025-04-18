@@ -7,5 +7,5 @@ import sat301.s_martproject.model.User;
 
 @Repository
 public interface CartRepo extends JpaRepository<Cart, Integer> {
-    Cart findByUser(User user); // ✅ Find cart by user
+    Cart findByUser(User user); 
 }
