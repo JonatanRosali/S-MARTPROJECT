@@ -122,11 +122,9 @@
     <div class="checkout-container">
         <h1>Checkout</h1>
 
-        <!-- ✅ Error message -->
         <p th:if="${error}" style="color: red;" th:text="${error}"></p>
 
         <form method="post" th:action="@{/checkout}">
-            <!-- ✅ Shipping Address Section -->
             <div class="section">
                 <h2>Shipping Address</h2>
                 <th:block th:if="${#lists.isEmpty(shippingList)}">
@@ -151,7 +149,6 @@
                 </th:block>
             </div>
 
-            <!-- ✅ Cart Items Section -->
             <div class="section">
                 <h2>Your Cart</h2>
                 <th:block th:if="${#lists.isEmpty(cartItems)}">
@@ -164,13 +161,12 @@
                         <div class="checkout-item-details">
                             <p><strong th:text="${item.product.product_name}">Product Name</strong></p>
                             <p>Quantity: <span th:text="${item.quantity}">1</span></p>
-                            <p>Subtotal: $<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">0.00</span></p>
+                            <p>Subtotal: ¥<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">0.00</span></p>
                         </div>
                     </div>
                 </th:block>
             </div>
 
-            <!-- ✅ Promo Code -->
             <div class="section">
                 <h2>Promo Code</h2>
                 <input type="text" id="promoCodeInput" name="promoCode" placeholder="Enter promo code">
@@ -178,7 +174,6 @@
                 
             </div>
 
-            <!-- ✅ Payment Method -->
             <div class="section">
                 <h2>Payment Method</h2>
                 <select name="paymentTypeId" required>
@@ -190,13 +185,11 @@
                 </select>
             </div>
 
-            <!-- ✅ Final Summary -->
             <div class="section total-summary">
-                <p>Subtotal: $<span th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span></p>          
-                <p><strong>Total: $<span id="finalTotalText" th:text="${#numbers.formatDecimal(finalTotal != null ? finalTotal : cartTotalPrice, 1, 2)}">0.00</span>                </strong></p>
+                <p>Subtotal: ¥<span th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span></p>          
+                <p><strong>Total: ¥<span id="finalTotalText" th:text="${#numbers.formatDecimal(finalTotal != null ? finalTotal : cartTotalPrice, 1, 2)}">0.00</span>                </strong></p>
             </div>
 
-            <!-- ✅ Submit -->
             <button type="submit" th:disabled="${#lists.isEmpty(cartItems)}">Place Order</button>
         </form>
     </div>
@@ -206,7 +199,6 @@
             const finalTotalText = document.getElementById("finalTotalText");
             const promoFeedback = document.getElementById("promoFeedback");
 
-            // Make sure initial total shows formatted value
             finalTotalText.textContent = parseFloat(finalTotalText.textContent).toFixed(2);
 
             promoInput.addEventListener("input", function () {
@@ -228,7 +220,7 @@
                     finalTotalText.textContent = data.finalTotal.toFixed(2);
                     if (data.valid) {
                         promoFeedback.style.color = "green";
-                        promoFeedback.textContent = `Promo applied! -$${data.discount.toFixed(2)}`;
+                        promoFeedback.textContent = `Promo applied! -¥${data.discount.toFixed(2)}`;
                     } else {
                         promoFeedback.style.color = "red";
                         promoFeedback.textContent = "Invalid promo code";

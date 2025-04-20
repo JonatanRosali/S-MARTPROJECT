@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import sat301.s_martproject.model.*;
 import sat301.s_martproject.repository.*;
 
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CartService {
@@ -43,5 +44,19 @@ public class CartService {
             cartDetailsRepo.deleteAll(cartItems);
         }
     }
+    public Map<String, Object> getCartSummary(User user) {
+        Map<String, Object> summary = new HashMap<>();
+        List<CartDetails> cartItems = getCartItems(user);
+        int totalItems = cartItems.stream().mapToInt(CartDetails::getQuantity).sum();
+        double totalPrice = calculateCartTotal(cartItems);
+    
+        summary.put("cartItems", cartItems);
+        summary.put("cartTotal", totalItems);
+        summary.put("cartTotalPrice", totalPrice);
+        return summary;
+    }
+    
+ 
+    
     
 }

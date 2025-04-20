@@ -8,17 +8,14 @@
     <link rel="stylesheet" th:href="@{/account-service.css}">
 </head>
 <body>
-    <!-- Load the Account Services Header -->
     <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
 
     <div class="shipping-container">
         <h2 th:text="${shippingDetail != null ? 'Edit Shipping Details' : 'Add Shipping Details'}"></h2>
 
-        <!-- Error & Success Messages -->
         <p th:if="${error}" style="color: red;" th:text="${error}"></p>
         <p th:if="${success}" style="color: green;" th:text="${success}"></p>
 
-        <!-- Shipping Details Form -->
         <form th:action="@{${shippingDetail != null} ? '/account-service/edit-shipping/' + ${shippingDetail.user_details_id} : '/account-service/add-shipping'}" method="post">
             <input type="hidden" name="id" th:value="${shippingDetail?.user_details_id}">
 

@@ -17,7 +17,6 @@
         </div>
         
         <div class="table-container">
-            <!-- Filter Dropdown -->
             <form method="get" th:action="@{/manage-orders}" id="statusForm" class="mb-3 d-flex justify-content-between align-items-center">
                 <div>
                     <label for="statusFilter">Filter by Status:</label>
@@ -30,7 +29,6 @@
                 </div>
             </form>
 
-            <!-- Orders Table -->
             <table class="table table-striped">
                 <thead class="table-dark">
                     <tr>
@@ -48,11 +46,10 @@
                         <td th:text="${order.order_id}"></td>
                         <td th:text="${order.user.username}"></td>
                         <td th:text="${#temporals.format(order.order_date, 'dd MMM yyyy HH:mm')}"></td>
-                        <td>$<span th:text="${order.total_amount}"></span></td>
+                        <td>¥<span th:text="${order.total_amount}"></span></td>
                         <td>
                             <a th:href="@{/manage-orders/details/{id}(id=${order.order_id})}" class="btn btn-sm btn-info">📄 View</a>
 
-                            <!-- Status-Based Actions -->
                             <span th:if="${currentStatus == 1}">
                                 <form th:action="@{/manage-orders/confirm/{id}(id=${order.order_id})}" method="post" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-success">✅ Confirm</button>
@@ -85,10 +82,8 @@
     </main>
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Auto-submit on status change
     document.getElementById('statusFilter').addEventListener('change', function () {
         document.getElementById('statusForm').submit();
     });

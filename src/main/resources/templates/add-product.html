@@ -12,7 +12,6 @@
         <main class="main-content">
             <h2 class="mb-3">Add New Product</h2>
 
-            <!-- Error Message -->
             <div th:if="${error}" class="alert alert-danger">
                 <span th:text="${error}"></span>
             </div>
@@ -69,7 +68,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Validate form before submitting
         document.getElementById("productForm").addEventListener("submit", function(event) {
             let price = parseFloat(document.querySelector('input[name="price"]').value);
             let review = parseFloat(document.querySelector('input[name="review"]').value);
@@ -94,7 +92,6 @@
             }
         });
 
-        // Image Preview and Selection
         document.getElementById("productImages").addEventListener("change", function(event) {
             let container = document.getElementById("imagePreviewContainer");
             container.innerHTML = "";
@@ -120,7 +117,7 @@
                     radio.style.top = "5px";
                     radio.style.left = "5px";
 
-                    if (index === 0) radio.checked = true; // First image is main by default
+                    if (index === 0) radio.checked = true; 
 
                     imgWrapper.appendChild(img);
                     imgWrapper.appendChild(radio);

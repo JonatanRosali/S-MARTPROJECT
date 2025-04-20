@@ -5,125 +5,72 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import sat301.s_martproject.model.Cart;
-import sat301.s_martproject.model.CartDetails;
-import sat301.s_martproject.model.Category;
-import sat301.s_martproject.model.Product;
-import sat301.s_martproject.model.ProductImage;
-import sat301.s_martproject.model.User;
-import sat301.s_martproject.repository.CartDetailsRepo;
-import sat301.s_martproject.repository.CartRepo;
-import sat301.s_martproject.repository.CategoryRepo;
-import sat301.s_martproject.repository.ProductImageRepo;
-import sat301.s_martproject.repository.ProductRepo;
+import sat301.s_martproject.model.*;
+import sat301.s_martproject.repository.*;
 import sat301.s_martproject.service.ProductService;
+import sat301.s_martproject.service.CartService;
+import sat301.s_martproject.util.SessionHelper;
 
 @Controller
 public class ProductController {
-    @Autowired
-    private ProductRepo productRepo;
-    
-    @Autowired
-    private ProductImageRepo productImageRepo;
 
-    @Autowired
-    private CartRepo cartRepo;
-    
-    @Autowired
-    private CartDetailsRepo cartDetailsRepo;
-    @Autowired
-    private CategoryRepo categoryRepo;
-    @Autowired
-    private ProductService productService;
+    @Autowired private ProductRepo productRepo;
+    @Autowired private ProductImageRepo productImageRepo;
+    @Autowired private CategoryRepo categoryRepo;
+    @Autowired private ProductService productService;
+    @Autowired private CartService cartService;
 
     @GetMapping("/product/{id}")
     public String productDetail(@PathVariable int id, Model model, HttpSession session, HttpServletRequest request) {
-
         User user = (User) session.getAttribute("user");
-        List<Category> categories = categoryRepo.findAll();
 
         Product product = productRepo.findById(id).orElse(null);
-        if (product != null) {
-            product.setImages(productImageRepo.findByProduct(product)); 
-        }
+        if (product == null) return "redirect:/home";
+
+        product.setImages(productImageRepo.findByProduct(product));
+
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("currentUri", request.getRequestURI());
+        model.addAttribute("userRoleId", user != null && user.getRole() != null ? user.getRole().getRole_id() : 0);
 
         if (user != null) {
-            Cart cart = cartRepo.findByUser(user);
-            if (cart != null) {
-                List<CartDetails> cartItems = cartDetailsRepo.findByCart(cart);
-                int cartTotal = cartItems.stream().mapToInt(CartDetails::getQuantity).sum();
-                double cartTotalPrice = cartItems.stream()
-                    .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
-                    .sum();
-
-                model.addAttribute("cartItems", cartItems);
-                model.addAttribute("cartTotal", cartTotal);
-                model.addAttribute("cartTotalPrice", cartTotalPrice);
-            } else {
-                model.addAttribute("cartItems", null);
-                model.addAttribute("cartTotal", 0);
-                model.addAttribute("cartTotalPrice", 0);
-            }
+            model.addAllAttributes(cartService.getCartSummary(user));
         } else {
             model.addAttribute("cartItems", null);
             model.addAttribute("cartTotal", 0);
             model.addAttribute("cartTotalPrice", 0);
         }
-        model.addAttribute("categories", categories);
-        model.addAttribute("product", product);
-        model.addAttribute("currentUri", request.getRequestURI());
-        int userRoleId = (user != null && user.getRole() != null) ? user.getRole().getRole_id() : 0;
-        model.addAttribute("userRoleId", userRoleId);
+
         return "productDetail";
-    }
-    private boolean isUserStaff(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        return user != null && user.getRole() != null && user.getRole().getRole_id() == 2;
-    }
-
-    private void addUserAttributesToModel(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-
-        if (user != null) {
-            model.addAttribute("user", user);
-            model.addAttribute("userRole", user.getRole() != null ? user.getRole().getRole_name() : "Unknown");
-            model.addAttribute("userImage", user.getProfile_img_url() != null ? user.getProfile_img_url() : "/images/default-profile.png");
-        }
     }
 
     @GetMapping("/manage-products")
     public String manageProducts(@RequestParam(value = "search", required = false) String search, HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin";
-    
-        List<Product> products;
-        if (search != null && !search.trim().isEmpty()) {
-            products = productRepo.searchProducts(search.trim());
-        } else {
-            products = productRepo.findAll();
-        }
-    
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
+
+        List<Product> products = (search != null && !search.trim().isEmpty())
+                ? productRepo.searchProducts(search.trim())
+                : productRepo.findAll();
+
         model.addAttribute("products", products);
         model.addAttribute("search", search);
-        addUserAttributesToModel(session, model);
-    
+        SessionHelper.addUserAttributesToModel(session, model);
+
         return "manage-products";
     }
 
     @GetMapping("/manage-products/add")
     public String addProductPage(HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin";
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
 
         model.addAttribute("categories", categoryRepo.findAll());
-        addUserAttributesToModel(session, model);
-
+        SessionHelper.addUserAttributesToModel(session, model);
         return "add-product";
     }
 
@@ -137,57 +84,58 @@ public class ProductController {
                              @RequestParam("product_images") MultipartFile[] product_images,
                              HttpSession session,
                              Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin";
-    
+
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
+
         Category category = categoryRepo.findById(category_id).orElse(null);
         if (category == null) {
             model.addAttribute("error", "Invalid category!");
             return "add-product";
         }
-    
+
         Product product = new Product(product_name, product_description, price, review, quantity, category);
-    
+
         try {
-            productService.validateProduct(product); // Validate before saving
+            productService.validateProduct(product);
             productRepo.save(product);
             productService.saveProductImages(product, product_images);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("categories", categoryRepo.findAll());
             return "add-product";
         }
-    
+
         return "redirect:/manage-products";
     }
-    
 
     @GetMapping("/manage-products/edit/{id}")
     public String editProductPage(@PathVariable int id, HttpSession session, Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin";
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
 
         Product product = productRepo.findById(id).orElse(null);
         if (product == null) return "redirect:/manage-products";
 
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepo.findAll());
-        addUserAttributesToModel(session, model);
+        SessionHelper.addUserAttributesToModel(session, model);
 
         return "edit-product";
     }
 
-
     @PostMapping("/manage-products/edit/{id}")
     public String editProduct(@PathVariable int id,
-                            @RequestParam String product_name,
-                            @RequestParam String product_description,
-                            @RequestParam double price,
-                            @RequestParam double review,
-                            @RequestParam int quantity,
-                            @RequestParam int category_id,
-                            @RequestParam(required = false) Integer main_image, 
-                            @RequestParam("product_images") MultipartFile[] product_images,
-                            HttpSession session,
-                            Model model) {
-        if (!isUserStaff(session)) return "redirect:/signin";
+                              @RequestParam String product_name,
+                              @RequestParam String product_description,
+                              @RequestParam double price,
+                              @RequestParam double review,
+                              @RequestParam int quantity,
+                              @RequestParam int category_id,
+                              @RequestParam(required = false) Integer main_image,
+                              @RequestParam("product_images") MultipartFile[] product_images,
+                              HttpSession session,
+                              Model model) {
+
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
 
         Product product = productRepo.findById(id).orElse(null);
         if (product == null) return "redirect:/manage-products";
@@ -220,18 +168,17 @@ public class ProductController {
 
         return "redirect:/manage-products";
     }
+
     @GetMapping("/manage-products/delete-image/{id}")
     public String deleteImage(@PathVariable int id, HttpSession session) {
-        if (!isUserStaff(session)) return "redirect:/signin";
-        
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
         productService.deleteProductImage(id);
         return "redirect:/manage-products";
     }
 
-
     @GetMapping("/manage-products/delete/{id}")
     public String deleteProduct(@PathVariable int id, HttpSession session) {
-        if (!isUserStaff(session)) return "redirect:/signin";
+        if (!SessionHelper.isUserStaff(session)) return "redirect:/signin";
 
         Product product = productRepo.findById(id).orElse(null);
         if (product != null) {
@@ -247,7 +194,3 @@ public class ProductController {
         return "redirect:/manage-products";
     }
 }
-
-    
-    
-

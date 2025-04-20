@@ -41,7 +41,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.profile_img_url = "/img/default-profile.png";
+        this.profile_img_url = "/images/blankprofile.png";
     }
     
 

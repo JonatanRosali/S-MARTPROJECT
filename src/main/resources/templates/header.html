@@ -4,8 +4,6 @@
         <input type="text" name="keyword" class="search-input" placeholder="Search..." required>
     </form>
     
-    
-    <!-- ✅ Hide Cart Button on Checkout Page -->
     <div th:if="${not (currentUri != null and currentUri.contains('/checkout'))}" class="cart" onclick="openPanel('cart-panel')">
         🛒(<span id="cart-count" th:text="${cartTotal}">0</span>)
     </div>    
@@ -49,7 +47,6 @@
         </ul>
     </div>
 
-    <!-- ✅ Hide Cart Panel on Checkout Page -->
     <div th:if="${not (currentUri != null and currentUri.contains('/checkout'))}" id="cart-panel" class="panel right">
         <div class="header-section cart-header">
             <span class="close-btn" onclick="closePanel('cart-panel')">&times;</span>
@@ -88,7 +85,7 @@
                 </div>
                 <div id="cart-footer" class="cart-footer">
                     <span>
-                        Checkout: $<span id="cart-total-price" th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span>
+                        Checkout: ¥<span id="cart-total-price" th:text="${#numbers.formatDecimal(cartTotalPrice, 1, 2)}">0.00</span>
                     </span>
                     <a id="checkout-btn" class="checkout-btn" href="#" onclick="handleCheckout(event)">
                         Checkout
@@ -99,7 +96,6 @@
     </div>
 </header>
 
-<!-- Add the required JavaScript to handle cart operations -->
 <th:block th:fragment="header-scripts">
     <script>
         document.addEventListener("DOMContentLoaded", function () {

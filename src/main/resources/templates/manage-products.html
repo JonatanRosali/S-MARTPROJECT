@@ -16,10 +16,8 @@
 <body class="bg-light">
 
     <div class="d-flex">
-        <!-- Sidebar -->
         <div th:replace="manager-sidebar.html"></div>
 
-        <!-- Main Content -->
         <main class="main-content">
             <h2 class="mb-3">Manage Products</h2>
 
@@ -29,7 +27,6 @@
                     <a class="btn btn-primary" th:href="@{/manage-products/add}">➕ Add Product</a>
                 </div>
                 
-                <!-- Error Message -->
                 <div th:if="${error}" class="alert alert-danger" role="alert">
                     <span th:text="${error}"></span>
                 </div>

@@ -1,4 +1,3 @@
-<!-- Sidebar Fragment -->
 <div class="sidebar d-flex flex-column">
     <div class="d-flex align-items-center mb-4">
         <img th:src="${userImage}" class="rounded-circle" width="50" height="50" style="object-fit: cover;">
@@ -9,7 +8,6 @@
     </div>                         
 
     <ul class="nav flex-column">
-        <!-- General Section -->
         <li class="fw-bold text-secondary mt-3">General</li>
         <li class="nav-item">
             <a class="nav-link" th:href="@{/staff-dashboard}">📊 Dashboard</a>
@@ -21,7 +19,6 @@
             <a class="nav-link" th:href="@{/home}">🛍️ Shop</a>
         </li>
 
-        <!-- Management Section -->
         <li class="fw-bold text-secondary mt-3">Management</li>
         <li class="nav-item">
             <a class="nav-link" th:href="@{/manage-products}">📦 Manage Products</a>

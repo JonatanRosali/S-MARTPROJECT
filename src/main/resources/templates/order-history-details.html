@@ -54,13 +54,13 @@
                             <td th:text="${item.product.product_name}"></td>
                             <td th:text="${item.product.product_description}"></td>
                             <td th:text="${item.quantity}"></td>
-                            <td>$<span th:text="${item.price_at_purchase}"></span></td>
-                            <td>$<span th:text="${item.price_at_purchase * item.quantity}"></span></td>
+                            <td>¥<span th:text="${item.price_at_purchase}"></span></td>
+                            <td>¥<span th:text="${item.price_at_purchase * item.quantity}"></span></td>
                         </tr>
                         <tr>
                             <td colspan="5" class="text-end"><strong>Total:</strong></td>
                             <td>
-                                $<span th:text="${#numbers.formatDecimal(order.total_amount, 1, 'COMMA', 2, 'POINT')}"></span>
+                                ¥<span th:text="${#numbers.formatDecimal(order.total_amount, 1, 'COMMA', 2, 'POINT')}"></span>
                             </td>
                         </tr>
                     </tbody>

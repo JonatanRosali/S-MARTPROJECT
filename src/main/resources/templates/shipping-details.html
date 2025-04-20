@@ -8,13 +8,11 @@
     <link rel="stylesheet" th:href="@{/account-service.css}">
 </head>
 <body>
-    <!-- Load the Account Services Header -->
     <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
 
     <div class="shipping-container">
         <h2>Shipping Details</h2>
 
-        <!-- Dynamically Loaded List of Shipping Details -->
         <div th:if="${userDetailsList != null and not #lists.isEmpty(userDetailsList)}">
             <div th:each="detail : ${userDetailsList}" class="shipping-card">
                 <p class="recipient-name">
@@ -24,7 +22,6 @@
                 </p>
                 <p class="address"><strong>Address:</strong> <span th:text="${detail.address}"></span></p>
 
-                <!-- Edit & Remove Buttons -->
                 <div class="shipping-actions">
                     <a th:href="@{/account-service/edit-shipping/{id}(id=${detail.user_details_id})}" class="edit-btn">Edit</a>
                     <a th:href="@{/account-service/remove-shipping/{id}(id=${detail.user_details_id})}" class="remove-btn" onclick="return confirm('Are you sure you want to delete this address?');">Remove</a>
@@ -32,10 +29,8 @@
             </div>
         </div>
 
-        <!-- Message if No Shipping Details Exist -->
         <p th:if="${#lists.isEmpty(userDetailsList)}" class="no-details">No shipping details found. Add a new one below.</p>
 
-        <!-- Add New Shipping Details Button -->
         <a th:href="@{/account-service/add-shipping}" class="account-btn">Add New Shipping Details</a>
     </div>
 

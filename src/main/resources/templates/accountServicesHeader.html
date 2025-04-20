@@ -13,16 +13,16 @@
         <ul th:if="${session.user != null}">
             <li>MANAGE YOUR ACCOUNT</li>
             <li>
-                <a th:href="@{/account-service}">Update Password</a>
+                <a th:href="@{/account-service/change-password}">Update Password</a>
             </li>
             <li>
-                <a th:href="@{/account-service}">Change Profile Picture</a>
+                <a th:href="@{/account-service/change-profile-picture}">Change Profile Picture</a>
             </li>
             <li>
-                <a th:href="@{/account-service}">Edit Shipping Details</a>
+                <a th:href="@{/account-service/shipping-details}">Edit Shipping Details</a>
             </li>
             <li>
-                <a th:href="@{/account-service}">View History</a>
+                <a th:href="@{/account-service/order-history}">View History</a>
             </li>
             <li>
                 <a th:href="@{/home}">Back to Home</a>

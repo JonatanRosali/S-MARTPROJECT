@@ -10,10 +10,9 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    touch-action: pan-y; /* Prevents vertical scrolling conflicts */
+    touch-action: pan-y; 
 }
 
-/* ✅ Container for All Slides */
 .promo-container {
     display: flex;
     width: 100%;
@@ -21,44 +20,39 @@
     will-change: transform;
 }
 
-/* ✅ Individual Slide */
 .promo-slide {
     flex: 0 0 100%;
     min-width: 100%;
 }
 
-/* ✅ Full-Screen Responsive Image (Fixed Height) */
 .promo-image {
     width: 100%;
-    height: 350px; /* Fixed height */
+    height: 350px; 
     object-fit: cover;
-    user-select: none; /* Prevent accidental selection */
-    pointer-events: none; /* Avoid accidental clicks while swiping */
+    user-select: none;
+    pointer-events: none; 
 }
 
 /* ✅ Mobile Optimization */
 @media screen and (max-width: 768px) {
     .promo-image {
-        height: 250px; /* Adjust height for smaller screens */
+        height: 250px; 
     }
 }
 .out-of-stock {
     position: relative;
-    background: rgba(255, 0, 0, 0.1); /* Light red overlay */
+    background: rgba(255, 0, 0, 0.1);
     opacity: 0.8;
 }
 
-/* ✅ Keep Product Name and Image Clickable */
 .out-of-stock a {
-    pointer-events: auto; /* Allow clicks */
+    pointer-events: auto;
 }
 
-/* ✅ Still Hide "Add to Cart" */
 .out-of-stock .cart-icon {
     display: none;
 }
 
-/* ✅ Show 'Out of Stock' Badge */
 .out-of-stock::after {
     content: "OUT OF STOCK";
     position: absolute;
@@ -80,7 +74,6 @@
 </head>
 <body>
     <div th:replace="~{header :: header}"></div>
-    <!-- ✅ Full-Width, Auto-Scrolling Promo Carousel -->
 
     <div th:if="${not #lists.isEmpty(promotions)}" class="promo-carousel">
         <div class="promo-container" id="promoContainer">
@@ -89,10 +82,6 @@
             </div>
         </div>
     </div>
-
-
-
-
     <section>
         <div class="section-title">SHOP BY CATEGORY</div>
         <div class="categories">
@@ -129,7 +118,7 @@
                                 </span>
                             </div>
                             
-                            <div class="price" th:text="'$' + ${product.price}"></div>
+                            <div class="price" th:text="'¥' + ${product.price}"></div>
                         
                             <a th:if="${session.user != null and product.quantity > 0}" 
                                 th:attr="onclick=|addToCart(${product.product_id})|">
@@ -170,7 +159,6 @@ window.onload = function () {
     let startX = 0;
     let isSwiping = false;
 
-    // ✅ Auto-Scroll Every 4 Seconds
     function autoScroll() {
         if (!isSwiping) {
             currentIndex = (currentIndex + 1) % slides.length;
@@ -179,33 +167,29 @@ window.onload = function () {
     }
     setInterval(autoScroll, 4000);
 
-    // ✅ Update Slide Position
     function updateSlide() {
         container.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
 
-    // ✅ Handle Touch Start
     container.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
         isSwiping = true;
     });
 
-    // ✅ Handle Touch Move
     container.addEventListener("touchmove", (e) => {
         let diffX = e.touches[0].clientX - startX;
 
         if (Math.abs(diffX) > 50) {
             if (diffX > 0) {
-                currentIndex = (currentIndex - 1 + slides.length) % slides.length; // Swipe Right
+                currentIndex = (currentIndex - 1 + slides.length) % slides.length; 
             } else {
-                currentIndex = (currentIndex + 1) % slides.length; // Swipe Left
+                currentIndex = (currentIndex + 1) % slides.length; 
             }
             updateSlide();
-            isSwiping = false; // Reset swiping
+            isSwiping = false; 
         }
     });
 
-    // ✅ Handle Touch End
     container.addEventListener("touchend", () => {
         isSwiping = false;
     });

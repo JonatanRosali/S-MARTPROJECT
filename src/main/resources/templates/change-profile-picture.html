@@ -8,10 +8,8 @@
     <link rel="stylesheet" th:href="@{/account-service.css}">
 </head>
 <body>
-    <!-- Load the Account Services Header -->
     <div th:replace="~{accountServicesHeader :: accountServicesHeader}"></div>
 
-    <!-- Centered Profile Section -->
     <div class="change-profile-container">
         <div class="profile-section">
             <img th:src="${session.userImage != null ? session.userImage : '/images/default-profile.png'}" 

@@ -14,7 +14,7 @@
         }
 
         window.onload = function() {
-            togglePromoImage(); // Ensure the correct state on page load
+            togglePromoImage();
         };
     </script>
 </head>
@@ -25,7 +25,6 @@
         <main class="main-content">
             <h2 class="mb-3">Edit Promotion</h2>
 
-            <!-- Error Message -->
             <div th:if="${error}" class="alert alert-danger">
                 <span th:text="${error}"></span>
             </div>
